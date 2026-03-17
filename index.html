@@ -8,14 +8,12 @@
     :root { --bg: #f1f5f9; --card: #ffffff; --text: #1e293b; --line: #94a3b8; }
     body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); margin: 0; overflow: hidden; height: 100vh; width: 100vw; touch-action: none; }
     
-    /* HEADER & TOOLBAR - Fixed Spacing */
     .header { position: fixed; top: 0; left: 0; right: 0; background: #1e293b; color: white; padding: 15px; text-align: center; z-index: 2000; height: 40px; }
     .header h1 { margin: 0; font-size: 22px; }
     
-    /* Pushed the toolbar down to 85px so it doesn't hide */
     .toolbar { position: fixed; top: 85px; left: 50%; transform: translateX(-50%); background: white; padding: 12px 25px; border-radius: 50px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); display: flex; gap: 10px; z-index: 1000; border: 2px solid #3b82f6; align-items: center; }
     
-    .tool-btn { padding: 10px 15px; border-radius: 20px; border: none; cursor: pointer; font-weight: bold; font-size: 12px; text-transform: uppercase; transition: 0.2s; }
+    .tool-btn { padding: 10px 15px; border-radius: 20px; border: none; cursor: pointer; font-weight: bold; font-size: 12px; text-transform: uppercase; }
     .zoom-btn { background: #334155; color: white; width: 45px; font-size: 18px; }
     .export-btn { background: #3b82f6; color: white; }
     .load-btn { background: #64748b; color: white; }
@@ -36,11 +34,13 @@
     .tree-node { background: var(--card); border: 2px solid #e2e8f0; border-radius: 18px; width: 250px; padding: 18px; display: inline-block; box-shadow: 0 10px 20px rgba(0,0,0,0.08); }
     .avatar-pair { display: flex; justify-content: center; gap: 12px; margin-bottom: 12px; position: relative; }
     .marriage-line { position: absolute; top: 35px; left: 50%; transform: translateX(-50%); width: 35px; height: 3px; background: var(--line); }
-    .node-avatar { width: 70px; height: 70px; border-radius: 50%; border: 4px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.12); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 24px; cursor: pointer; background-size: cover; background-position: center; position: relative; z-index: 2; }
+    .node-avatar { width: 70px; height: 70px; border-radius: 50%; border: 4px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.12); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 24px; cursor: pointer; background-size: cover; background-position: center; position: relative; z-index: 2; overflow: hidden; }
+    .node-avatar:hover::after { content: '📷'; position: absolute; background: rgba(0,0,0,0.4); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; }
     
     .male { background: #3b82f6; color: white; }
     .female { background: #ec4899; color: white; }
     .name-tag { font-weight: 800; color: var(--text); font-size: 17px; margin-top: 10px; }
+    .dob-tag { font-size: 13px; color: #64748b; font-weight: 600; margin-top: 2px; }
 
     .node-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 18px; }
     .btn { padding: 10px 5px; border: none; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
@@ -60,6 +60,7 @@
     <button class="tool-btn load-btn" onclick="document.getElementById('fileInput').click()">📂 Load</button>
     <button class="tool-btn share-btn" onclick="copyLink()">🔗 Link</button>
     <input type="file" id="fileInput" style="display: none" onchange="importData(event)">
+    <input type="file" id="photoInput" style="display: none" onchange="handlePhotoUpload(event)">
   </div>
 
   <div id="viewport">
@@ -78,29 +79,46 @@
     window.onmouseup = () => isDragging = false;
     function updateTransform() { container.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`; }
 
-    function copyLink() { navigator.clipboard.writeText(window.location.href); alert("Link copied to clipboard!"); }
+    function copyLink() { navigator.clipboard.writeText(window.location.href); alert("Link copied!"); }
 
-    let familyData = JSON.parse(localStorage.getItem('daaboul_v8')) || [{ id: 1, name: "New Tree", gender: "male", parentId: null }];
-    function save() { localStorage.setItem('daaboul_v8', JSON.stringify(familyData)); render(); }
+    // --- PHOTO LOGIC ---
+    let currentPhotoTarget = { id: null, type: 'primary' };
+    function triggerPhoto(id, type) { currentPhotoTarget = { id, type }; document.getElementById('photoInput').click(); }
+    function handlePhotoUpload(e) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const p = familyData.find(x => x.id === currentPhotoTarget.id);
+        if (currentPhotoTarget.type === 'primary') p.photo = event.target.result;
+        else p.spousePhoto = event.target.result;
+        save();
+      };
+      reader.readAsDataURL(e.target.files[0]);
+    }
+
+    // --- FAMILY LOGIC ---
+    let familyData = JSON.parse(localStorage.getItem('daaboul_v9')) || [{ id: 1, name: "New Tree", dob: "1900", gender: "male", parentId: null }];
+    function save() { localStorage.setItem('daaboul_v9', JSON.stringify(familyData)); render(); }
 
     function editPerson(id) { 
       const p = familyData.find(x => x.id === id);
       p.name = prompt("Enter Name:", p.name) || p.name;
+      p.dob = prompt("Enter Date of Birth (e.g. 1950 or Jan 12, 1950):", p.dob || "1900");
       p.gender = (prompt("Gender (male/female):", p.gender) || "male").toLowerCase();
       save(); 
     }
 
-    function addChild(pid) { const name = prompt("Child's Name:"); if(name) { familyData.push({ id: Date.now(), name, gender: "male", parentId: pid }); save(); } }
+    function addChild(pid) { const name = prompt("Child's Name:"); if(name) { familyData.push({ id: Date.now(), name, dob: "2026", gender: "male", parentId: pid }); save(); } }
     
     function addSpouse(id) { 
       const p = familyData.find(x => x.id === id);
       p.spouseName = prompt("Spouse's Name:");
+      p.spouseDOB = prompt("Spouse DOB:", "1900");
       p.spouseGender = (prompt("Spouse Gender (male/female):", "female") || "female").toLowerCase();
       save(); 
     }
 
     function deleteNode(id) {
-      if(confirm("Are you sure? This will delete this person and all their children.")) {
+      if(confirm("Are you sure?")) {
         const del = (tid) => {
           familyData.filter(x => x.parentId === tid).forEach(c => del(c.id));
           familyData = familyData.filter(x => x.id !== tid);
@@ -118,13 +136,15 @@
         if(!items.length) return "";
         let h = "<ul>";
         items.forEach(m => {
+          const hasSpouse = !!m.spouseName;
           h += `<li>
             <div class="tree-node">
               <div class="avatar-pair">
-                <div class="node-avatar ${m.gender}">${m.name ? m.name[0] : '?'}</div>
-                ${m.spouseName ? `<div class="marriage-line"></div><div class="node-avatar ${m.spouseGender}">${m.spouseName[0]}</div>` : ''}
+                <div class="node-avatar ${m.gender}" style="${m.photo ? `background-image:url(${m.photo});font-size:0` : ''}" onclick="triggerPhoto(${m.id}, 'primary')">${m.name ? m.name[0] : '?'}</div>
+                ${hasSpouse ? `<div class="marriage-line"></div><div class="node-avatar ${m.spouseGender}" style="${m.spousePhoto ? `background-image:url(${m.spousePhoto});font-size:0` : ''}" onclick="triggerPhoto(${m.id}, 'spouse')">${m.spouseName ? m.spouseName[0] : '?'}</div>` : ''}
               </div>
-              <div class="name-tag">${m.name} ${m.spouseName ? '& '+m.spouseName : ''}</div>
+              <div class="name-tag">${m.name} ${hasSpouse ? '& '+m.spouseName : ''}</div>
+              <div class="dob-tag">b. ${m.dob || '????'} ${hasSpouse ? '& b. ' + (m.spouseDOB || '????') : ''}</div>
               <div class="node-actions">
                 <button class="btn edit-btn" onclick="editPerson(${m.id})">Edit</button>
                 <button class="btn add-btn" onclick="addChild(${m.id})">Child</button>
