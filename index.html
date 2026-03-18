@@ -10,18 +10,15 @@
     :root { --bg: #f1f5f9; --card: #ffffff; --text: #1e293b; --male: #2563eb; --female: #db2777; --line: #64748b; --highlight: #fef08a; }
     body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; overflow: hidden; height: 100vh; width: 100vw; touch-action: none; }
     
-    /* TOP INTERFACE - FIXED TO TOP */
-    .top-interface { position: fixed; top: 0; left: 0; right: 0; z-index: 9999; background: #0f172a; padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); pointer-events: auto; }
+    .top-interface { position: fixed; top: 0; left: 0; right: 0; z-index: 9999; background: #0f172a; padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
     .header-title { color: white; margin: 0; font-family: "Lucida Calligraphy", cursive, serif; font-size: 20px; }
 
-    .controls-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; pointer-events: auto; }
+    .controls-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; }
     .search-input { padding: 10px; border-radius: 20px; border: 2px solid #cbd5e1; width: 160px; font-size: 14px; outline: none; }
     
-    /* TREE VIEWPORT */
     #viewport { width: 100vw; height: 100vh; cursor: grab; display: flex; align-items: center; justify-content: center; position: absolute; top: 0; left: 0; z-index: 100; }
-    #tree-container { transform-origin: center center; padding-top: 200px; }
+    #tree-container { transform-origin: center center; padding-top: 220px; }
 
-    /* TREE ELEMENTS */
     .tree ul { display: flex; justify-content: center; padding: 20px 0; position: relative; list-style: none; }
     .tree li { position: relative; padding: 20px 10px 0; }
     .tree li::before, .tree li::after { content: ''; position: absolute; top: 0; right: 50%; border-top: 3px solid var(--line); width: 50%; height: 20px; }
@@ -31,27 +28,25 @@
     .highlighted { background: var(--highlight) !important; border-color: #eab308 !important; box-shadow: 0 0 20px #facc15; }
 
     .avatar-pair { display: flex; justify-content: center; gap: 8px; margin-bottom: 8px; }
-    .node-avatar { width: 50px; height: 50px; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 3px solid white; background-size: cover; background-position: center; }
+    .node-avatar { width: 55px; height: 55px; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 3px solid white; background-size: cover; background-position: center; background-color: #cbd5e1; }
     .male { background-color: var(--male); } .female { background-color: var(--female); }
     
-    .name-tag { font-weight: bold; font-size: 15px; display: block; }
+    .name-tag { font-weight: bold; font-size: 15px; display: block; margin-top: 5px; }
     .dob-tag { font-size: 12px; color: #64748b; display: block; margin-bottom: 10px; }
 
     .btn { padding: 8px; border: none; border-radius: 8px; font-size: 10px; cursor: pointer; font-weight: bold; text-transform: uppercase; background: #e2e8f0; }
     .node-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
 
-    /* MOBILE-READY ZOOM BUTTONS */
-    .mobile-btn { width: 44px; height: 44px; border-radius: 50%; border: 2px solid #3b82f6; background: white; font-size: 22px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; -webkit-appearance: none; }
-    .mobile-btn:active { background: #dbeafe; }
+    .mobile-btn { width: 48px; height: 48px; border-radius: 50%; border: 2px solid #3b82f6; background: white; font-size: 24px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10000; }
   </style>
 </head>
 <body>
 
-  <div class="top-interface" id="ui">
+  <div class="top-interface">
     <h2 class="header-title">The Daaboul Family Tree</h2>
     <div class="controls-row">
-      <button class="mobile-btn" onclick="zoom(0.8)">−</button>
-      <button class="mobile-btn" onclick="zoom(1.2)">+</button>
+      <button class="mobile-btn" onpointerdown="zoom(0.8)">−</button>
+      <button class="mobile-btn" onpointerdown="zoom(1.2)">+</button>
       <input type="text" class="search-input" id="searchBox" placeholder="🔍 Search Name" oninput="doSearch()">
       <button class="btn" style="background:#3b82f6; color:white; padding: 10px;" onclick="resetView()">🏠 Home</button>
       <button class="btn" style="background:#475569; color:white; padding: 10px;" onclick="document.getElementById('fileIn').click()">📂 Load</button>
@@ -104,10 +99,13 @@
         let h = "<ul>";
         items.forEach(m => {
           const hasS = !!m.spouseName;
+          const photoStyle = m.photo ? `style="background-image:url('${m.photo}')"` : '';
+          const spousePhotoStyle = m.spousePhoto ? `style="background-image:url('${m.spousePhoto}')"` : '';
+
           h += `<li><div class="tree-node" id="node-${m.id}">
             <div class="avatar-pair">
-              <div class="node-avatar ${m.gender}" style="background-image:url('${m.photo || ''}')">${m.photo ? '' : (m.name ? m.name[0] : '?')}</div>
-              ${hasS ? `<div class="node-avatar ${m.spouseGender || 'female'}" style="background-image:url('${m.spousePhoto || ''}')">${m.spousePhoto ? '' : m.spouseName[0]}</div>` : ''}
+              <div class="node-avatar ${m.gender}" ${photoStyle}>${m.photo ? '' : (m.name ? m.name[0] : '?')}</div>
+              ${hasS ? `<div class="node-avatar ${m.spouseGender || 'female'}" ${spousePhotoStyle}>${m.spousePhoto ? '' : m.spouseName[0]}</div>` : ''}
             </div>
             <span class="name-tag">${m.name || 'Unknown'} ${hasS ? '& '+m.spouseName : ''}</span>
             <span class="dob-tag">${m.dob || ''} ${hasS && m.spouseDOB ? '| ' + m.spouseDOB : ''}</span>
@@ -124,12 +122,11 @@
       document.getElementById('tree-container').innerHTML = build(null) || build(undefined);
     }
 
-    // PERSON LOGIC
     function editP(id) {
       const p = familyData.find(x => x.id == id);
-      p.name = prompt("Name:", p.name);
+      p.name = prompt("Full Name:", p.name);
       p.dob = prompt("Birth Year:", p.dob || "");
-      p.photo = prompt("Photo URL:", p.photo || "");
+      p.photo = prompt("Photo URL Link:", p.photo || "");
       save();
     }
     function addC(pid) {
@@ -139,14 +136,14 @@
     function addS(id) {
       const p = familyData.find(x => x.id == id);
       p.spouseName = prompt("Spouse Name:");
-      p.spouseDOB = prompt("Spouse Year:");
+      p.spouseDOB = prompt("Spouse Birth Year:");
+      p.spousePhoto = prompt("Spouse Photo URL Link:");
       save();
     }
     function delP(id) {
-      if(confirm("Delete?")) { familyData = familyData.filter(x => x.id != id && x.parentId != id); save(); }
+      if(confirm("Delete this person and their branch?")) { familyData = familyData.filter(x => x.id != id && x.parentId != id); save(); }
     }
 
-    // ZOOM & DRAG
     let s = 1, x = 0, y = 0, startX = 0, startY = 0, isDown = false;
     const ct = document.getElementById('tree-container');
 
@@ -157,9 +154,9 @@
     const start = (ex, ey) => { isDown = true; startX = ex - x; startY = ey - y; };
     const move = (ex, ey) => { if(!isDown) return; x = ex - startX; y = ey - startY; apply(); };
 
-    window.onmousedown = e => { if(e.target.closest('#ui') || e.target.closest('.btn')) return; start(e.clientX, e.clientY); };
+    window.onmousedown = e => { if(e.target.closest('.top-interface') || e.target.closest('.btn')) return; start(e.clientX, e.clientY); };
     window.onmousemove = e => move(e.clientX, e.clientY);
-    window.ontouchstart = e => { if(e.target.closest('#ui') || e.target.closest('.btn')) return; start(e.touches[0].clientX, e.touches[0].clientY); };
+    window.ontouchstart = e => { if(e.target.closest('.top-interface') || e.target.closest('.btn')) return; start(e.touches[0].clientX, e.touches[0].clientY); };
     window.ontouchmove = e => move(e.touches[0].clientX, e.touches[0].clientY);
     window.onmouseup = window.ontouchend = () => isDown = false;
 
