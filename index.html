@@ -52,9 +52,17 @@
       display: flex; justify-content: center; 
     }
 
-    /* BRASS PIPE CONNECTORS */
-    .tree ul { display: flex; justify-content: center; flex-wrap: nowrap; padding: 40px 0 0 0; position: relative; list-style: none; margin: 0; }
-    .tree li { position: relative; padding: 40px 15px 0; flex: 0 0 auto; text-align: center; }
+    .tree ul { 
+      display: flex; justify-content: center; padding: 40px 0 0 0; margin: 0;
+      position: relative; list-style: none;
+    }
+    
+    .tree li { 
+      position: relative; padding: 40px 15px 0; 
+      text-align: center; 
+      flex: 0 0 auto; 
+      min-width: max-content; 
+    }
     
     .tree li::before, .tree li::after { 
       content: ''; position: absolute; top: 0; right: 50%; 
@@ -76,29 +84,30 @@
       margin-left: -2.5px; box-shadow: 3px 0 5px rgba(0,0,0,0.6);
     }
 
-    /* BRASS PLAQUE DESIGN (Matching Reference Image) */
+    /* THE FIX: changed display to inline-flex and added margin: 0 auto */
     .tree-node { 
       background: linear-gradient(135deg, var(--brass-light), var(--brass-dark));
       border: 3px solid #8c6200; 
       border-radius: 6px; 
-      width: 320px; /* Wider to fit horizontal layout */
-      padding: 12px; display: flex; align-items: center; gap: 15px;
+      width: 320px; 
+      padding: 12px; 
+      display: inline-flex; /* Magic fix 1 */
+      align-items: center; gap: 15px;
+      margin: 0 auto; /* Magic fix 2 */
       box-shadow: 6px 6px 15px rgba(0,0,0,0.8), inset 0 0 8px rgba(255,255,255,0.4); 
       position: relative;
     }
     
-    /* Hardware Screws on the plaque */
     .screw { position: absolute; width: 8px; height: 8px; background: #555; border-radius: 50%; box-shadow: inset 1px 1px 2px #222, 1px 1px 1px rgba(255,255,255,0.5); }
     .screw::after { content: ''; position: absolute; top: 3px; left: 1px; width: 6px; height: 1.5px; background: #222; transform: rotate(45deg); }
     .s-tl { top: 6px; left: 6px; } .s-tr { top: 6px; right: 6px; }
     .s-bl { bottom: 6px; left: 6px; } .s-br { bottom: 6px; right: 6px; }
 
-    /* HORIZONTAL CONTENT LAYOUT */
     .avatar-pair { display: flex; flex-direction: column; gap: 8px; margin: 0; }
     
     .node-avatar { 
       width: 60px; height: 60px; 
-      border-radius: 6px; /* Square framed photos like the reference */
+      border-radius: 6px; 
       border: 3px solid var(--engraved); 
       background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center;
       font-family: "Lucida Calligraphy", cursive, serif; font-size: 28px; font-weight: 900;
@@ -116,7 +125,6 @@
     .name-tag { font-family: "Lucida Calligraphy", cursive, serif; font-weight: bold; font-size: 16px; color: var(--engraved); margin: 0 0 5px 0; line-height: 1.2; text-shadow: 1px 1px 0px rgba(255,255,255,0.4); }
     .dob-tag { font-family: 'Segoe UI', serif; font-size: 13px; color: #5c4033; font-weight: bold; margin-bottom: 8px; }
 
-    /* ACTION BUTTONS inside the plaque */
     .node-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; width: 100%; }
     .btn { 
       padding: 6px; border: 1px solid rgba(0,0,0,0.3); border-radius: 4px; font-size: 10px; cursor: pointer; font-weight: bold; text-transform: uppercase; 
