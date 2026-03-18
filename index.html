@@ -15,41 +15,40 @@
       --female: #db2777; 
     }
     
-    body { 
+    html, body { 
       font-family: 'Segoe UI', sans-serif; 
       background: var(--paper); 
       background-image: url('https://www.transparenttextures.com/patterns/p6.png');
       margin: 0; 
+      padding: 0;
       overflow: hidden; 
-      height: 100vh; 
-      width: 100vw; 
+      height: 100%; 
+      width: 100%; 
       touch-action: none; 
     }
     
+    /* BULLETPROOF TOP NAVIGATION */
     .interface-layer { 
-      position: fixed; top: 0; left: 0; right: 0; z-index: 10000; 
-      background: rgba(62, 39, 35, 0.95); padding: 15px; 
+      position: fixed; top: 0; left: 0; right: 0; z-index: 999999; 
+      background: rgba(62, 39, 35, 0.98); padding: 15px; 
       display: flex; flex-direction: column; align-items: center; gap: 10px; 
-      box-shadow: 0 4px 20px rgba(0,0,0,0.4); 
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5); 
     }
     .header-title { color: #d7ccc8; margin: 0; font-family: "Lucida Calligraphy", cursive, serif; font-size: 24px; }
 
-    .controls-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: center; }
-    .search-input { padding: 10px 15px; border-radius: 25px; border: 2px solid #8d6e63; width: 200px; outline: none; }
+    .controls-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; }
+    .search-input { padding: 10px 15px; border-radius: 25px; border: 2px solid #8d6e63; width: 180px; outline: none; }
 
-    #viewport { width: 100vw; height: 100vh; cursor: grab; position: relative; overflow: hidden; z-index: 100; touch-action: none; }
-    
-    /* Simplified container to allow the Smart Camera to work perfectly */
-    #tree-container { position: absolute; left: 0; top: 0; width: 100vw; display: flex; justify-content: center; padding-top: 220px; transform-origin: top center; }
+    #viewport { width: 100vw; height: 100vh; cursor: grab; position: absolute; top: 0; left: 0; z-index: 100; overflow: hidden; }
+    #tree-container { position: absolute; left: 50%; top: 0; padding-top: 240px; transform-origin: top center; transform: translate(-50%, 0) scale(1); display: flex; justify-content: center; }
 
+    /* TREE STRUCTURE */
     .tree ul { display: flex; justify-content: center; padding: 40px 0; position: relative; list-style: none; margin: 0; }
     .tree li { position: relative; padding: 40px 15px 0; }
     
     .tree li::before, .tree li::after { 
       content: ''; position: absolute; top: 0; right: 50%; 
-      border-top: 6px solid var(--wood); 
-      width: 50%; height: 40px; 
-      border-radius: 10px;
+      border-top: 6px solid var(--wood); width: 50%; height: 40px; border-radius: 10px;
     }
     .tree li::after { right: auto; left: 50%; border-left: 6px solid var(--wood); }
     .tree li:only-child::after, .tree li:only-child::before { display: none; }
@@ -57,47 +56,44 @@
     .tree li:first-child::before, .tree li:last-child::after { border: 0 none; }
     .tree li:last-child::before { border-right: 6px solid var(--wood); border-radius: 0 10px 0 0; }
     .tree li:first-child::after { border-radius: 10px 0 0 0; }
-    .tree ul ul::before { 
-      content: ''; position: absolute; top: 0; left: 50%; 
-      border-left: 6px solid var(--wood); width: 0; height: 40px; 
-    }
+    .tree ul ul::before { content: ''; position: absolute; top: 0; left: 50%; border-left: 6px solid var(--wood); width: 0; height: 40px; }
 
+    /* NODE STYLING */
     .tree-node { 
-      background: white; 
-      border: 4px solid var(--wood); 
-      border-radius: 15px; 
-      width: 260px; padding: 15px; 
-      display: inline-block; 
-      box-shadow: 8px 8px 0px rgba(93, 64, 55, 0.2);
-      position: relative;
+      background: white; border: 4px solid var(--wood); border-radius: 15px; 
+      width: 260px; padding: 15px; display: inline-block; 
+      box-shadow: 8px 8px 0px rgba(93, 64, 55, 0.2); position: relative;
     }
-    .tree-node::before {
-      content: '🍃'; position: absolute; top: -15px; left: -10px; font-size: 20px;
-    }
+    .tree-node::before { content: '🍃'; position: absolute; top: -15px; left: -10px; font-size: 20px; }
 
     .avatar-pair { display: flex; justify-content: center; gap: 12px; margin-bottom: 10px; }
-    
     .node-avatar { 
-      width: 65px; height: 65px; border-radius: 50%; 
-      border: 3px solid var(--wood); 
-      background-size: cover; background-position: center; 
-      display: flex; align-items: center; justify-content: center;
-      font-size: 26px; font-weight: 900; color: white;
-      cursor: pointer; position: relative; 
+      width: 65px; height: 65px; border-radius: 50%; border: 3px solid var(--wood); 
+      background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center;
+      font-size: 26px; font-weight: 900; color: white; cursor: pointer; position: relative; 
     }
     .node-avatar::after { content: '📸'; position: absolute; bottom: -5px; right: -5px; font-size: 14px; background: white; border-radius: 50%; padding: 2px; border: 1px solid var(--wood); }
     
-    .male { background-color: var(--male); } 
-    .female { background-color: var(--female); }
+    .male { background-color: var(--male); } .female { background-color: var(--female); }
     
     .name-tag { font-weight: bold; font-size: 16px; color: var(--wood); margin: 5px 0; }
     .dob-tag { font-size: 13px; color: var(--leaf); font-weight: bold; margin-bottom: 10px; }
 
     .btn { padding: 8px; border: none; border-radius: 5px; font-size: 10px; cursor: pointer; font-weight: bold; text-transform: uppercase; background: #efebe9; color: var(--wood); border-bottom: 2px solid #d7ccc8; }
     .node-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
-    .zoom-btn { width: 50px; height: 50px; border-radius: 50%; border: 2px solid #d7ccc8; background: var(--wood); color: white; font-size: 26px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    
+    /* FIXED ZOOM BUTTONS */
+    .zoom-btn { width: 45px; height: 45px; border-radius: 50%; border: 2px solid #d7ccc8; background: var(--wood); color: white; font-size: 24px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 999999; }
+    .zoom-btn:active { transform: scale(0.9); background: #3e2723; }
     
     .highlighted { background: #fff9c4 !important; border-color: #fbc02d !important; }
+
+    /* HIDES MENU WHEN PRINTING TO PDF */
+    @media print {
+      #top-nav { display: none !important; }
+      body { background: white !important; }
+      #tree-container { transform: none !important; position: relative !important; left: 0 !important; padding-top: 20px !important; }
+    }
   </style>
 </head>
 <body>
@@ -105,11 +101,15 @@
   <div class="interface-layer" id="top-nav">
     <h2 class="header-title">The Daaboul Family Tree</h2>
     <div class="controls-row">
-      <button class="zoom-btn" onpointerdown="zoom(0.8)">−</button>
-      <button class="zoom-btn" onpointerdown="zoom(1.2)">+</button>
+      <button class="zoom-btn" onclick="zoom(0.8)">−</button>
+      <button class="zoom-btn" onclick="zoom(1.2)">+</button>
+      
       <input type="text" class="search-input" id="searchBox" placeholder="Search Ancestors..." oninput="runSearch()">
+      
       <button class="btn" style="background:var(--leaf); color:white;" onclick="resetView()">🏠 Home</button>
       <button class="btn" style="background:var(--wood); color:white;" onclick="document.getElementById('fileIn').click()">📂 Load</button>
+      <button class="btn" style="background:#1976d2; color:white;" onclick="window.print()">🖨️ Save PDF</button>
+      
       <input type="file" id="fileIn" style="display:none" onchange="importData(event)">
       <input type="file" id="imagePicker" style="display:none" accept="image/*">
     </div>
@@ -132,7 +132,7 @@
     const db = firebase.database().ref('familyTree');
     let familyData = [];
     let activeTarget = null;
-    let isFirstLoad = true; // Helps the Smart Camera
+    let isFirstLoad = true;
 
     db.on('value', snap => {
       const data = snap.val();
@@ -154,14 +154,13 @@
 
     function render() {
       if (!familyData || familyData.length === 0) {
-        document.getElementById('tree-container').innerHTML = "<h3 style='color:var(--wood)'>Tree is empty. Click LOAD.</h3>";
+        document.getElementById('tree-container').innerHTML = "<h3 style='color:var(--wood); margin-top:50px;'>Tree is empty. Click LOAD.</h3>";
         return;
       }
 
-      // SMART ROOT FINDER: Finds the true ancestors ignoring broken links
       const allIds = new Set(familyData.map(x => x.id));
       let roots = familyData.filter(x => !x.parentId || !allIds.has(x.parentId));
-      if (roots.length === 0) roots = [familyData[0]]; // Ultimate fallback
+      if (roots.length === 0) roots = [familyData[0]];
 
       const build = (nodes) => {
         if(!nodes || nodes.length === 0) return "";
@@ -173,7 +172,6 @@
           
           const l1 = (m.name && m.name.length > 0) ? m.name[0].toUpperCase() : '?';
           const l2 = (hasS && m.spouseName && m.spouseName.length > 0) ? m.spouseName[0].toUpperCase() : '?';
-
           const children = familyData.filter(x => x.parentId == m.id);
 
           h += `<li><div class="tree-node" id="node-${m.id}">
@@ -196,21 +194,19 @@
 
       document.getElementById('tree-container').innerHTML = build(roots);
 
-      // Trigger Smart Camera
       if(isFirstLoad) {
         setTimeout(centerOnRoot, 100);
         isFirstLoad = false;
       }
     }
 
-    // SMART CAMERA: Locks onto the top box
     function centerOnRoot() {
       const rootNode = document.querySelector('.tree > ul > li > .tree-node');
       if(rootNode) {
         const box = rootNode.getBoundingClientRect();
         const screenCenter = window.innerWidth / 2;
         const boxCenter = box.left + (box.width / 2);
-        x += (screenCenter - boxCenter); // Shift screen to perfectly align
+        x += (screenCenter - boxCenter); 
         apply();
       }
     }
@@ -255,13 +251,19 @@
 
     let s = 1, x = 0, y = 0, startX = 0, startY = 0, isDown = false;
     const ct = document.getElementById('tree-container');
+    
     function zoom(amt) { s *= amt; apply(); }
     function resetView() { s = 1; x = 0; y = 0; centerOnRoot(); apply(); }
-    function apply() { ct.style.transform = `translate(${x}px, ${y}px) scale(${s})`; }
+    function apply() { ct.style.transform = `translate(calc(-50% + ${x}px), ${y}px) scale(${s})`; }
 
-    window.onmousedown = e => { if(e.target.closest('#top-nav') || e.target.closest('.btn') || e.target.closest('.node-avatar')) return; isDown = true; startX = e.clientX - x; startY = e.clientY - y; };
+    // TOUCH BARRIER: If you tap ANY button or the top menu, it immediately blocks the drag motion.
+    function isUI(e) {
+      return e.target.closest('#top-nav') || e.target.closest('.btn') || e.target.closest('.zoom-btn') || e.target.closest('.node-avatar');
+    }
+
+    window.onmousedown = e => { if(isUI(e)) return; isDown = true; startX = e.clientX - x; startY = e.clientY - y; };
     window.onmousemove = e => { if(!isDown) return; x = e.clientX - startX; y = e.clientY - startY; apply(); };
-    window.ontouchstart = e => { if(e.target.closest('#top-nav') || e.target.closest('.btn') || e.target.closest('.node-avatar')) return; isDown = true; startX = e.touches[0].clientX - x; startY = e.touches[0].clientY - y; };
+    window.ontouchstart = e => { if(isUI(e)) return; isDown = true; startX = e.touches[0].clientX - x; startY = e.touches[0].clientY - y; };
     window.ontouchmove = e => { if(!isDown) return; x = e.touches[0].clientX - startX; y = e.touches[0].clientY - startY; apply(); };
     window.onmouseup = window.ontouchend = () => isDown = false;
 
@@ -269,7 +271,3 @@
       const r = new FileReader();
       r.onload = ev => { familyData = JSON.parse(ev.target.result); isFirstLoad = true; render(); save(); };
       r.readAsText(e.target.files[0]);
-    }
-  </script>
-</body>
-</html>
