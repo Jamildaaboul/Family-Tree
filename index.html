@@ -3,32 +3,43 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Daaboul Family Tree - Cloud Sync</title>
+  <title>The Daaboul Family Tree</title>
+  
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+  
   <style>
     :root { --bg: #f1f5f9; --card: #ffffff; --text: #1e293b; --male: #2563eb; --female: #db2777; --line: #64748b; }
     body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; overflow: hidden; height: 100vh; width: 100vw; }
+    
+    /* RESTORED FONT */
     .header { position: fixed; top: 0; width: 100%; background: #0f172a; color: white; padding: 10px; text-align: center; z-index: 1000; }
+    .header h2 { margin: 0; font-family: "Lucida Calligraphy", cursive; font-size: 26px; }
+
     .toolbar { position: fixed; top: 75px; left: 50%; transform: translateX(-50%); background: white; padding: 10px 20px; border-radius: 40px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); z-index: 1000; display: flex; gap: 8px; border: 1px solid #cbd5e1; }
     #viewport { width: 100vw; height: 100vh; cursor: grab; display: flex; align-items: center; justify-content: center; touch-action: none; }
-    #tree-container { transform-origin: center center; padding-top: 150px; }
+    #tree-container { transform-origin: center center; padding-top: 150px; transition: transform 0.1s; }
+    
+    /* Tree Lines */
     .tree ul { display: flex; justify-content: center; padding: 20px 0; position: relative; list-style: none; }
     .tree li { position: relative; padding: 20px 10px 0; }
     .tree li::before, .tree li::after { content: ''; position: absolute; top: 0; right: 50%; border-top: 3px solid var(--line); width: 50%; height: 20px; }
     .tree li::after { right: auto; left: 50%; border-left: 3px solid var(--line); }
+    
+    /* Person Cards */
     .tree-node { background: var(--card); border: 2px solid #cbd5e1; border-radius: 20px; width: 260px; padding: 15px; display: inline-block; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
     .avatar-pair { display: flex; justify-content: center; gap: 10px; margin-bottom: 8px; }
     .node-avatar { width: 60px; height: 60px; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; border: 3px solid white; background-size: cover; background-position: center; }
     .male { background-color: var(--male); } .female { background-color: var(--female); }
     .name-tag { font-weight: 800; font-size: 15px; color: var(--text); }
-    .btn { padding: 6px 4px; border: none; border-radius: 6px; font-size: 8px; cursor: pointer; font-weight: bold; text-transform: uppercase; }
-    .btn-edit { background: #e2e8f0; } .btn-child { background: #3b82f6; color: white; } .btn-spouse { background: #10b981; color: white; } .btn-del { background: #ef4444; color: white; grid-column: span 2; }
+    
     .node-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 10px; }
+    .btn { padding: 8px 4px; border: none; border-radius: 6px; font-size: 9px; cursor: pointer; font-weight: bold; text-transform: uppercase; }
+    .btn-edit { background: #e2e8f0; } .btn-child { background: #3b82f6; color: white; } .btn-spouse { background: #10b981; color: white; } .btn-del { background: #ef4444; color: white; grid-column: span 2; }
   </style>
 </head>
 <body>
-  <div class="header"><h3>Daaboul Family Tree</h3></div>
+  <div class="header"><h2>The Daaboul Family Tree</h2></div>
   <div class="toolbar">
     <button class="btn" onclick="resetView()">🏠 Home</button>
     <button class="btn" style="background:#475569;color:white" onclick="document.getElementById('f').click()">📂 Load File</button>
@@ -45,6 +56,7 @@
       storageBucket: "daaboul-family-tree.firebasestorage.app",
       messagingSenderId: "169162734833",
       appId: "1:169162734833:web:233a37139441336023bd50",
+      measurementId: "G-GENYMJ5HH6",
       databaseURL: "https://daaboul-family-tree-default-rtdb.firebaseio.com"
     };
 
@@ -52,14 +64,12 @@
     const db = firebase.database().ref('familyTree');
     let familyData = [];
 
-    // Auto-Sync from Cloud
+    // Listen to Cloud
     db.on('value', snap => {
       const data = snap.val();
       if(data) {
         familyData = data;
         render();
-      } else {
-        console.log("Cloud is empty");
       }
     });
 
@@ -73,7 +83,7 @@
         save();
         alert("Synced! Tablet should update now.");
       };
-      r.readAsText(e.target.files[0]);
+      reader.readAsText(e.target.files[0]);
     }
 
     function editPerson(id) {
