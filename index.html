@@ -35,7 +35,12 @@
     .search-input { padding: 10px 15px; border-radius: 25px; border: 2px solid #8d6e63; width: 180px; outline: none; font-size: 14px; }
 
     #viewport { width: 100vw; height: 100vh; cursor: grab; position: absolute; top: 0; left: 0; z-index: 100; overflow: hidden; }
-    #tree-container { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+    
+    /* THE FIX: width: max-content stops the browser from squishing asymmetrical trees */
+    #tree-container { 
+      position: absolute; left: 0; top: 0; transform-origin: 0 0; 
+      width: max-content; min-width: 100vw; padding-bottom: 100px;
+    }
 
     .tree ul { display: flex; justify-content: center; padding: 40px 0; position: relative; list-style: none; margin: 0; }
     .tree li { position: relative; padding: 40px 15px 0; }
@@ -75,7 +80,6 @@
     .btn { padding: 8px; border: none; border-radius: 5px; font-size: 10px; cursor: pointer; font-weight: bold; text-transform: uppercase; background: #efebe9; color: var(--wood); border-bottom: 2px solid #d7ccc8; }
     .node-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
     
-    /* FAST-TOUCH ZOOM BUTTONS */
     .zoom-btn { width: 45px; height: 45px; border-radius: 50%; border: 2px solid #d7ccc8; background: var(--wood); color: white; font-size: 26px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; touch-action: manipulation; }
     .zoom-btn:active { transform: scale(0.9); background: #3e2723; }
     
@@ -146,7 +150,7 @@
 
     function render() {
       if (!familyData || familyData.length === 0) {
-        document.getElementById('tree-container').innerHTML = "<h3 style='color:var(--wood); margin-left: 20px;'>Tree is empty. Click LOAD.</h3>";
+        document.getElementById('tree-container').innerHTML = "<h3 style='color:var(--wood); margin-left: 20px; padding-top: 150px;'>Tree is empty. Click LOAD.</h3>";
         return;
       }
 
@@ -187,23 +191,33 @@
       document.getElementById('tree-container').innerHTML = build(roots);
 
       if(isFirstLoad) {
-        // Half-second delay gives the tablet time to finish drawing before measuring
-        setTimeout(centerOnRoot, 500); 
+        // Fire 3 times to guarantee it centers even if photos take a second to load
+        setTimeout(centerOnRoot, 100); 
+        setTimeout(centerOnRoot, 800);
+        setTimeout(centerOnRoot, 1500);
         isFirstLoad = false;
       }
     }
 
+    // PERFECT CENTERING LOGIC
     function centerOnRoot() {
-      const rootNode = document.querySelector('.tree-node');
-      if(rootNode) {
-        s = 1; x = 0; y = 150;
-        apply(); // Temporarily pin to 0 to get a clean measurement
+      const ct = document.getElementById('tree-container');
+      const rootNode = document.querySelector('.tree-node'); // Selects the highest ancestor box
+      
+      if(rootNode && ct) {
+        // Step 1: Briefly clear the transform to get an exact mathematical measurement
+        ct.style.transform = `translate(0px, 0px) scale(1)`;
+        void ct.offsetWidth; // Force browser to calculate sizing immediately
         
+        // Step 2: Measure exactly where the box is
         const rect = rootNode.getBoundingClientRect();
         const rootCenterX = rect.left + (rect.width / 2);
         const screenCenterX = window.innerWidth / 2;
         
-        x = screenCenterX - rootCenterX; // Shift perfectly to middle
+        // Step 3: Shift the coordinates to center it, then apply
+        s = 1; 
+        x = screenCenterX - rootCenterX; 
+        y = 150; // Distance from the top menu
         apply();
       }
     }
@@ -246,23 +260,19 @@
       if(confirm("Delete person and descendants?")) { familyData = familyData.filter(x => x.id != id && x.parentId != id); save(); }
     }
 
-    // Default starting point so it never starts truly blank
-    let s = 1, x = window.innerWidth / 4, y = 150, startX = 0, startY = 0, isDown = false;
+    let s = 1, x = 0, y = 150, startX = 0, startY = 0, isDown = false;
     const ct = document.getElementById('tree-container');
     const vp = document.getElementById('viewport');
     
-    // Forced button trigger
     function triggerZoom(event, amt) {
-      event.preventDefault(); // Stop tablet swipe logic
-      event.stopPropagation();
-      s *= amt;
-      apply();
+      event.preventDefault(); event.stopPropagation();
+      s *= amt; apply();
     }
     
+    // The Home button is now an instant manual centering tool
     function resetView() { centerOnRoot(); }
     function apply() { ct.style.transform = `translate(${x}px, ${y}px) scale(${s})`; }
 
-    // Touch events only trigger on the background viewport now
     function isUI(e) { return e.target.closest('#top-nav') || e.target.closest('.btn') || e.target.closest('.node-avatar'); }
 
     vp.onmousedown = e => { if(isUI(e)) return; isDown = true; startX = e.clientX - x; startY = e.clientY - y; };
