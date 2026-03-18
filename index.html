@@ -11,8 +11,8 @@
       --wood: #5d4037; 
       --leaf: #2e7d32; 
       --paper: #fdf5e6; 
-      --male: #1976d2; 
-      --female: #c2185b; 
+      --male: #2563eb; 
+      --female: #db2777; 
     }
     
     body { 
@@ -38,17 +38,17 @@
     .controls-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: center; }
     .search-input { padding: 10px 15px; border-radius: 25px; border: 2px solid #8d6e63; width: 200px; outline: none; }
 
-    #viewport { width: 100vw; height: 100vh; cursor: grab; display: flex; align-items: center; justify-content: center; position: absolute; top: 0; left: 0; z-index: 100; }
-    #tree-container { transform-origin: center center; padding-top: 250px; }
+    /* LAYOUT FIX: Centers the root box horizontally and anchors it to the top */
+    #viewport { width: 100vw; height: 100vh; cursor: grab; display: flex; align-items: flex-start; justify-content: center; position: absolute; top: 0; left: 0; z-index: 100; }
+    #tree-container { transform-origin: top center; padding-top: 180px; display: flex; justify-content: center; }
 
     /* ORGANIC TREE BRANCHES */
     .tree ul { display: flex; justify-content: center; padding: 40px 0; position: relative; list-style: none; }
     .tree li { position: relative; padding: 40px 15px 0; }
     
-    /* The "Wood" Branch Lines */
     .tree li::before, .tree li::after { 
       content: ''; position: absolute; top: 0; right: 50%; 
-      border-top: 6px solid var(--wood); /* Thicker wood lines */
+      border-top: 6px solid var(--wood); 
       width: 50%; height: 40px; 
       border-radius: 10px;
     }
@@ -73,20 +73,25 @@
       box-shadow: 8px 8px 0px rgba(93, 64, 55, 0.2);
       position: relative;
     }
-    /* Leaf decoration */
     .tree-node::before {
       content: '🍃'; position: absolute; top: -15px; left: -10px; font-size: 20px;
     }
 
     .avatar-pair { display: flex; justify-content: center; gap: 12px; margin-bottom: 10px; }
+    
+    /* LETTER FIX: Perfectly centers the letters and restores visibility */
     .node-avatar { 
       width: 65px; height: 65px; border-radius: 50%; 
       border: 3px solid var(--wood); 
-      background-size: cover; background-position: center; background-color: #d7ccc8; 
+      background-size: cover; background-position: center; 
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px; font-weight: 900; color: white;
       cursor: pointer; position: relative; 
     }
-    .male { border-color: var(--male); } 
-    .female { border-color: var(--female); }
+    
+    /* Restored colors for empty photo circles */
+    .male { background-color: var(--male); } 
+    .female { background-color: var(--female); }
     
     .name-tag { font-weight: bold; font-size: 16px; color: var(--wood); margin: 5px 0; }
     .dob-tag { font-size: 13px; color: var(--leaf); font-weight: bold; margin-bottom: 10px; }
@@ -159,10 +164,11 @@
           const p1 = m.photo ? `style="background-image:url('${m.photo}')"` : '';
           const p2 = m.spousePhoto ? `style="background-image:url('${m.spousePhoto}')"` : '';
 
+          // Added .toUpperCase() so the letters are always perfectly capitalized
           h += `<li><div class="tree-node" id="node-${m.id}">
             <div class="avatar-pair">
-              <div class="node-avatar ${m.gender}" ${p1} onclick="pickNewFile(${m.id}, false)">${m.photo ? '' : (m.name ? m.name[0] : '?')}</div>
-              ${hasS ? `<div class="node-avatar ${m.spouseGender || 'female'}" ${p2} onclick="pickNewFile(${m.id}, true)">${m.spousePhoto ? '' : m.spouseName[0]}</div>` : ''}
+              <div class="node-avatar ${m.gender}" ${p1} onclick="pickNewFile(${m.id}, false)">${m.photo ? '' : (m.name ? m.name[0].toUpperCase() : '?')}</div>
+              ${hasS ? `<div class="node-avatar ${m.spouseGender || 'female'}" ${p2} onclick="pickNewFile(${m.id}, true)">${m.spousePhoto ? '' : m.spouseName[0].toUpperCase()}</div>` : ''}
             </div>
             <span class="name-tag">${m.name || 'Unknown'} ${hasS ? '& '+m.spouseName : ''}</span>
             <span class="dob-tag">${m.dob || ''}</span>
@@ -223,9 +229,9 @@
     function resetView() { s = 1; x = 0; y = 0; apply(); }
     function apply() { ct.style.transform = `translate(${x}px, ${y}px) scale(${s})`; }
 
-    window.onmousedown = e => { if(e.target.closest('#top-nav') || e.target.closest('.btn')) return; isDown = true; startX = e.clientX - x; startY = e.clientY - y; };
+    window.onmousedown = e => { if(e.target.closest('#top-nav') || e.target.closest('.btn') || e.target.closest('.node-avatar')) return; isDown = true; startX = e.clientX - x; startY = e.clientY - y; };
     window.onmousemove = e => { if(!isDown) return; x = e.clientX - startX; y = e.clientY - startY; apply(); };
-    window.ontouchstart = e => { if(e.target.closest('#top-nav') || e.target.closest('.btn')) return; isDown = true; startX = e.touches[0].clientX - x; startY = e.touches[0].clientY - startY; };
+    window.ontouchstart = e => { if(e.target.closest('#top-nav') || e.target.closest('.btn') || e.target.closest('.node-avatar')) return; isDown = true; startX = e.touches[0].clientX - x; startY = e.touches[0].clientY - y; };
     window.ontouchmove = e => { if(!isDown) return; x = e.touches[0].clientX - startX; y = e.touches[0].clientY - startY; apply(); };
     window.onmouseup = window.ontouchend = () => isDown = false;
 
