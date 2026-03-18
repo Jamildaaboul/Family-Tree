@@ -11,7 +11,6 @@
       --gold-light: #f4d068; 
       --gold-main: #c59b27;
       --gold-dark: #8c6200;
-      /* UPDATED: Much lighter, warmer wood tones to match your new image */
       --wood-bg: #9c663e; 
       --wood-dark: #5c381d;
       --parchment: #f4e8d1;
@@ -56,7 +55,6 @@
 
     #viewport { width: 100vw; height: 100vh; cursor: grab; position: absolute; top: 0; left: 0; z-index: 100; overflow: hidden; }
     
-    /* UNBREAKABLE HORIZONTAL LAYOUT */
     #tree-container { 
       position: absolute; left: 0; top: 0; transform-origin: 0 0; 
       width: max-content !important; min-width: 100vw; padding: 160px 100px 150px 100px; 
@@ -111,6 +109,8 @@
       box-shadow: 0 10px 20px rgba(0,0,0,0.8), inset 0 0 0 2px var(--gold-light), inset 0 0 15px rgba(0,0,0,0.5); 
       position: relative;
       white-space: normal !important; 
+      /* Added a smooth transition so the search highlight animates elegantly */
+      transition: all 0.3s ease;
     }
     
     .crest-icon { font-size: 24px; color: var(--gold-main); margin: 0 10px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
@@ -137,7 +137,6 @@
     .name-tag { font-family: 'Georgia', serif; font-weight: bold; font-size: 18px; color: var(--text-dark); margin: 5px 0 2px 0; line-height: 1.2; text-shadow: 1px 1px 0px rgba(255,255,255,0.6); }
     .dob-tag { font-family: 'Georgia', serif; font-size: 14px; color: #5c4033; font-weight: normal; margin-bottom: 0; font-style: italic; }
 
-    /* LEATHER HANGING TABS */
     .node-actions { 
       display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; 
       position: absolute; bottom: -15px; width: 120%;
@@ -155,7 +154,15 @@
     .zoom-btn { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--gold-main); background: var(--wood-bg); color: var(--gold-light); font-size: 26px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; touch-action: manipulation; box-shadow: 0 3px 8px rgba(0,0,0,0.8); }
     .zoom-btn:active { transform: scale(0.9); background: var(--leather); }
     
-    .highlighted { box-shadow: 0 0 30px var(--gold-light), inset 0 0 20px var(--gold-light) !important; }
+    /* THE FIX: Supercharged Search Highlight */
+    .highlighted { 
+      background-color: #ffffff !important; 
+      background-image: none !important; /* Removes the parchment texture so it pops */
+      border-color: #ffffff !important;
+      box-shadow: 0 0 40px var(--gold-light), 0 0 20px #fff !important; 
+      transform: scale(1.1) !important; /* Physically pops out at you */
+      z-index: 999 !important; /* Brings it in front of other boxes */
+    }
 
     @media print {
       #top-nav { display: none !important; }
@@ -216,7 +223,8 @@
       const term = document.getElementById('searchBox').value.toLowerCase();
       document.querySelectorAll('.tree-node').forEach(node => {
         const name = node.querySelector('.name-tag').innerText.toLowerCase();
-        node.classList.toggle('highlighted', term && name.includes(term));
+        // Fixed: Ensure the search completely clears if the box is empty
+        node.classList.toggle('highlighted', term.length > 0 && name.includes(term));
       });
     }
 
@@ -243,7 +251,6 @@
           const l1 = (m.name && m.name.length > 0) ? m.name[0].toUpperCase() : '?';
           const l2 = (hasS && m.spouseName && m.spouseName.length > 0) ? m.spouseName[0].toUpperCase() : '?';
           
-          // UPDATED DOB LOGIC
           const dob1 = m.dob || '';
           const dob2 = (hasS && m.spouseDOB) ? m.spouseDOB : '';
           const dobDisplay = (dob1 && dob2) ? `${dob1} & ${dob2}` : (dob1 || dob2);
@@ -351,7 +358,8 @@
     function resetView() { centerOnRoot(); }
     function apply() { ct.style.transform = `translate(${x}px, ${y}px) scale(${s})`; }
 
-    function isUI(e) { return e.target.closest('#top-nav') || e.target.closest('.btn') || e.target.closest('.node-actions') || e.target.closest('.node-avatar'); }
+    /* FIXED: Ensures clicking inside the search box doesn't accidentally trigger a drag */
+    function isUI(e) { return e.target.closest('#top-nav') || e.target.closest('input') || e.target.closest('.btn') || e.target.closest('.node-actions') || e.target.closest('.node-avatar'); }
 
     vp.onmousedown = e => { if(isUI(e)) return; isDown = true; startX = e.clientX - x; startY = e.clientY - y; };
     vp.onmousemove = e => { if(!isDown) return; x = e.clientX - startX; y = e.clientY - startY; apply(); };
