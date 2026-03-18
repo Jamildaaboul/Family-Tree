@@ -3,41 +3,99 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Daaboul Family Tree - Final</title>
+  <title>The Daaboul Family Tree</title>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
   <style>
-    :root { --bg: #f1f5f9; --card: #ffffff; --text: #1e293b; --male: #2563eb; --female: #db2777; --line: #64748b; --highlight: #fef08a; }
-    body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; overflow: hidden; height: 100vh; width: 100vw; touch-action: none; }
+    :root { 
+      --wood: #5d4037; 
+      --leaf: #2e7d32; 
+      --paper: #fdf5e6; 
+      --male: #1976d2; 
+      --female: #c2185b; 
+    }
     
-    .interface-layer { position: fixed; top: 0; left: 0; right: 0; z-index: 10000; background: #0f172a; padding: 15px; display: flex; flex-direction: column; align-items: center; gap: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); pointer-events: auto; }
-    .header-title { color: white; margin: 0; font-family: "Lucida Calligraphy", cursive, serif; font-size: 22px; }
+    body { 
+      font-family: 'Segoe UI', sans-serif; 
+      background: var(--paper); 
+      /* Subtle parchment texture */
+      background-image: url('https://www.transparenttextures.com/patterns/p6.png');
+      margin: 0; 
+      overflow: hidden; 
+      height: 100vh; 
+      width: 100vw; 
+      touch-action: none; 
+    }
+    
+    .interface-layer { 
+      position: fixed; top: 0; left: 0; right: 0; z-index: 10000; 
+      background: rgba(62, 39, 35, 0.95); padding: 15px; 
+      display: flex; flex-direction: column; align-items: center; gap: 10px; 
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4); 
+    }
+    .header-title { color: #d7ccc8; margin: 0; font-family: "Lucida Calligraphy", cursive, serif; font-size: 24px; }
 
-    .controls-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: center; pointer-events: auto; }
-    .search-input { padding: 12px 15px; border-radius: 25px; border: 3px solid #3b82f6; width: 220px; font-size: 16px; outline: none; background: white; pointer-events: auto; }
+    .controls-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: center; }
+    .search-input { padding: 10px 15px; border-radius: 25px; border: 2px solid #8d6e63; width: 200px; outline: none; }
 
     #viewport { width: 100vw; height: 100vh; cursor: grab; display: flex; align-items: center; justify-content: center; position: absolute; top: 0; left: 0; z-index: 100; }
     #tree-container { transform-origin: center center; padding-top: 250px; }
 
-    .tree ul { display: flex; justify-content: center; padding: 20px 0; position: relative; list-style: none; }
-    .tree li { position: relative; padding: 20px 10px 0; }
-    .tree li::before, .tree li::after { content: ''; position: absolute; top: 0; right: 50%; border-top: 3px solid var(--line); width: 50%; height: 20px; }
-    .tree li::after { right: auto; left: 50%; border-left: 3px solid var(--line); }
+    /* ORGANIC TREE BRANCHES */
+    .tree ul { display: flex; justify-content: center; padding: 40px 0; position: relative; list-style: none; }
+    .tree li { position: relative; padding: 40px 15px 0; }
     
-    .tree-node { background: var(--card); border: 2px solid #cbd5e1; border-radius: 20px; width: 250px; padding: 15px; display: inline-block; }
-    .highlighted { background: var(--highlight) !important; border-color: #eab308 !important; box-shadow: 0 0 25px #facc15; transform: scale(1.05); }
+    /* The "Wood" Branch Lines */
+    .tree li::before, .tree li::after { 
+      content: ''; position: absolute; top: 0; right: 50%; 
+      border-top: 6px solid var(--wood); /* Thicker wood lines */
+      width: 50%; height: 40px; 
+      border-radius: 10px;
+    }
+    .tree li::after { right: auto; left: 50%; border-left: 6px solid var(--wood); }
+    .tree li:only-child::after, .tree li:only-child::before { display: none; }
+    .tree li:only-child { padding-top: 0; }
+    .tree li:first-child::before, .tree li:last-child::after { border: 0 none; }
+    .tree li:last-child::before { border-right: 6px solid var(--wood); border-radius: 0 10px 0 0; }
+    .tree li:first-child::after { border-radius: 10px 0 0 0; }
+    .tree ul ul::before { 
+      content: ''; position: absolute; top: 0; left: 50%; 
+      border-left: 6px solid var(--wood); width: 0; height: 40px; 
+    }
 
-    .avatar-pair { display: flex; justify-content: center; gap: 10px; margin-bottom: 8px; }
-    .node-avatar { width: 65px; height: 65px; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 3px solid white; background-size: cover; background-position: center; background-color: #cbd5e1; cursor: pointer; position: relative; }
-    .node-avatar::after { content: '📸'; position: absolute; bottom: 0; right: 0; font-size: 12px; background: white; border-radius: 50%; padding: 2px; }
+    /* WOODEN NODES */
+    .tree-node { 
+      background: white; 
+      border: 4px solid var(--wood); 
+      border-radius: 15px; 
+      width: 260px; padding: 15px; 
+      display: inline-block; 
+      box-shadow: 8px 8px 0px rgba(93, 64, 55, 0.2);
+      position: relative;
+    }
+    /* Leaf decoration */
+    .tree-node::before {
+      content: '🍃'; position: absolute; top: -15px; left: -10px; font-size: 20px;
+    }
+
+    .avatar-pair { display: flex; justify-content: center; gap: 12px; margin-bottom: 10px; }
+    .node-avatar { 
+      width: 65px; height: 65px; border-radius: 50%; 
+      border: 3px solid var(--wood); 
+      background-size: cover; background-position: center; background-color: #d7ccc8; 
+      cursor: pointer; position: relative; 
+    }
+    .male { border-color: var(--male); } 
+    .female { border-color: var(--female); }
     
-    .male { background-color: var(--male); } .female { background-color: var(--female); }
-    .name-tag { font-weight: bold; font-size: 15px; display: block; margin: 5px 0; }
-    .dob-tag { font-size: 13px; color: #475569; display: block; margin-bottom: 10px; font-weight: 600; }
+    .name-tag { font-weight: bold; font-size: 16px; color: var(--wood); margin: 5px 0; }
+    .dob-tag { font-size: 13px; color: var(--leaf); font-weight: bold; margin-bottom: 10px; }
 
-    .btn { padding: 10px 8px; border: none; border-radius: 8px; font-size: 10px; cursor: pointer; font-weight: bold; text-transform: uppercase; background: #e2e8f0; }
+    .btn { padding: 8px; border: none; border-radius: 5px; font-size: 10px; cursor: pointer; font-weight: bold; text-transform: uppercase; background: #efebe9; color: var(--wood); border-bottom: 2px solid #d7ccc8; }
     .node-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
-    .zoom-btn { width: 50px; height: 50px; border-radius: 50%; border: 2px solid #3b82f6; background: white; font-size: 26px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .zoom-btn { width: 50px; height: 50px; border-radius: 50%; border: 2px solid #d7ccc8; background: var(--wood); color: white; font-size: 26px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    
+    .highlighted { background: #fff9c4 !important; border-color: #fbc02d !important; }
   </style>
 </head>
 <body>
@@ -47,11 +105,10 @@
     <div class="controls-row">
       <button class="zoom-btn" onpointerdown="zoom(0.8)">−</button>
       <button class="zoom-btn" onpointerdown="zoom(1.2)">+</button>
-      <input type="text" class="search-input" id="searchBox" placeholder="Search Names..." oninput="runSearch()">
-      <button class="btn" style="background:#3b82f6; color:white;" onclick="resetView()">🏠 Home</button>
-      <button class="btn" style="background:#475569; color:white;" onclick="document.getElementById('fileIn').click()">📂 Load</button>
+      <input type="text" class="search-input" id="searchBox" placeholder="Search Ancestors..." oninput="runSearch()">
+      <button class="btn" style="background:var(--leaf); color:white;" onclick="resetView()">🏠 Home</button>
+      <button class="btn" style="background:var(--wood); color:white;" onclick="document.getElementById('fileIn').click()">📂 Load</button>
       <input type="file" id="fileIn" style="display:none" onchange="importData(event)">
-      
       <input type="file" id="imagePicker" style="display:none" accept="image/*">
     </div>
   </div>
@@ -66,7 +123,6 @@
       storageBucket: "daaboul-family-tree.firebasestorage.app",
       messagingSenderId: "169162734833",
       appId: "1:169162734833:web:233a37139441336023bd50",
-      measurementId: "G-GENYMJ5HH6",
       databaseURL: "https://daaboul-family-tree-default-rtdb.firebaseio.com"
     };
 
@@ -112,9 +168,9 @@
             <span class="dob-tag">${m.dob || ''}</span>
             <div class="node-actions">
               <button class="btn" onclick="editP(${m.id})">Edit</button>
-              <button class="btn" style="background:#3b82f6;color:white" onclick="addC(${m.id})">+Child</button>
-              <button class="btn" style="background:#10b981;color:white" onclick="addS(${m.id})">+Spouse</button>
-              <button class="btn" style="background:#ef4444;color:white" onclick="delP(${m.id})">Del</button>
+              <button class="btn" style="background:var(--leaf);color:white" onclick="addC(${m.id})">+Child</button>
+              <button class="btn" style="background:#8d6e63;color:white" onclick="addS(${m.id})">+Spouse</button>
+              <button class="btn" style="background:#d32f2f;color:white" onclick="delP(${m.id})">Del</button>
             </div>
           </div>${build(m.id)}</li>`;
         });
@@ -123,7 +179,6 @@
       document.getElementById('tree-container').innerHTML = build(null) || build(undefined);
     }
 
-    // NEW LOGIC: OPEN GALLERY INSTEAD OF PROMPT
     function pickNewFile(id, isSpouse) {
       activeTarget = { id, isSpouse };
       document.getElementById('imagePicker').click();
@@ -132,14 +187,12 @@
     document.getElementById('imagePicker').onchange = function(e) {
       const file = e.target.files[0];
       if (!file) return;
-      
       const reader = new FileReader();
       reader.onload = function(event) {
         const person = familyData.find(x => x.id == activeTarget.id);
         if(activeTarget.isSpouse) person.spousePhoto = event.target.result;
         else person.photo = event.target.result;
         save();
-        alert("Photo Uploaded!");
       };
       reader.readAsDataURL(file);
     };
@@ -161,7 +214,7 @@
       save();
     }
     function delP(id) {
-      if(confirm("Delete?")) { familyData = familyData.filter(x => x.id != id && x.parentId != id); save(); }
+      if(confirm("Delete person and descendants?")) { familyData = familyData.filter(x => x.id != id && x.parentId != id); save(); }
     }
 
     let s = 1, x = 0, y = 0, startX = 0, startY = 0, isDown = false;
@@ -170,13 +223,10 @@
     function resetView() { s = 1; x = 0; y = 0; apply(); }
     function apply() { ct.style.transform = `translate(${x}px, ${y}px) scale(${s})`; }
 
-    const start = (ex, ey) => { isDown = true; startX = ex - x; startY = ey - y; };
-    const move = (ex, ey) => { if(!isDown) return; x = ex - startX; y = ey - startY; apply(); };
-
-    window.onmousedown = e => { if(e.target.closest('#top-nav') || e.target.closest('.btn')) return; start(e.clientX, e.clientY); };
-    window.onmousemove = e => move(e.clientX, e.clientY);
-    window.ontouchstart = e => { if(e.target.closest('#top-nav') || e.target.closest('.btn')) return; start(e.touches[0].clientX, e.touches[0].clientY); };
-    window.ontouchmove = e => move(e.touches[0].clientX, e.touches[0].clientY);
+    window.onmousedown = e => { if(e.target.closest('#top-nav') || e.target.closest('.btn')) return; isDown = true; startX = e.clientX - x; startY = e.clientY - y; };
+    window.onmousemove = e => { if(!isDown) return; x = e.clientX - startX; y = e.clientY - startY; apply(); };
+    window.ontouchstart = e => { if(e.target.closest('#top-nav') || e.target.closest('.btn')) return; isDown = true; startX = e.touches[0].clientX - x; startY = e.touches[0].clientY - startY; };
+    window.ontouchmove = e => { if(!isDown) return; x = e.touches[0].clientX - startX; y = e.touches[0].clientY - startY; apply(); };
     window.onmouseup = window.ontouchend = () => isDown = false;
 
     function importData(e) {
