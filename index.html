@@ -2,44 +2,38 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daaboul Family Tree - Cloud & Photo Edition</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Daaboul Family Tree - Cloud Sync</title>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
-  
   <style>
     :root { --bg: #f1f5f9; --card: #ffffff; --text: #1e293b; --male: #2563eb; --female: #db2777; --line: #64748b; }
-    body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; overflow: hidden; height: 100vh; }
+    body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; overflow: hidden; height: 100vh; width: 100vw; }
     .header { position: fixed; top: 0; width: 100%; background: #0f172a; color: white; padding: 10px; text-align: center; z-index: 1000; }
-    .header h2 { margin: 0; font-family: "Lucida Calligraphy", cursive; font-size: 24px; }
-    .toolbar { position: fixed; top: 75px; left: 50%; transform: translateX(-50%); background: white; padding: 10px 25px; border-radius: 40px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); z-index: 1000; display: flex; gap: 10px; border: 1px solid #cbd5e1; }
-    #viewport { width: 100vw; height: 100vh; cursor: grab; display: flex; align-items: center; justify-content: center; }
-    #tree-container { transform-origin: center center; padding-top: 150px; transition: transform 0.1s ease-out; }
+    .toolbar { position: fixed; top: 75px; left: 50%; transform: translateX(-50%); background: white; padding: 10px 20px; border-radius: 40px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); z-index: 1000; display: flex; gap: 8px; border: 1px solid #cbd5e1; }
+    #viewport { width: 100vw; height: 100vh; cursor: grab; display: flex; align-items: center; justify-content: center; touch-action: none; }
+    #tree-container { transform-origin: center center; padding-top: 150px; }
     .tree ul { display: flex; justify-content: center; padding: 20px 0; position: relative; list-style: none; }
-    .tree li { position: relative; padding: 20px 10px 0; text-align: center; }
+    .tree li { position: relative; padding: 20px 10px 0; }
     .tree li::before, .tree li::after { content: ''; position: absolute; top: 0; right: 50%; border-top: 3px solid var(--line); width: 50%; height: 20px; }
     .tree li::after { right: auto; left: 50%; border-left: 3px solid var(--line); }
-    .tree-node { background: var(--card); border: 2px solid #cbd5e1; border-radius: 20px; width: 280px; padding: 20px; display: inline-block; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-    .avatar-pair { display: flex; justify-content: center; gap: 15px; margin-bottom: 10px; position: relative; }
-    .node-avatar { width: 70px; height: 70px; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 24px; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); background-size: cover; background-position: center; position: relative; z-index: 2; }
+    .tree-node { background: var(--card); border: 2px solid #cbd5e1; border-radius: 20px; width: 260px; padding: 15px; display: inline-block; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+    .avatar-pair { display: flex; justify-content: center; gap: 10px; margin-bottom: 8px; }
+    .node-avatar { width: 60px; height: 60px; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; border: 3px solid white; background-size: cover; background-position: center; }
     .male { background-color: var(--male); } .female { background-color: var(--female); }
-    .name-tag { font-weight: 800; font-size: 16px; color: var(--text); margin-top: 5px; }
-    .year-tag { font-size: 13px; color: #64748b; margin-bottom: 15px; min-height: 1em; }
-    .node-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
-    .btn { padding: 8px 5px; border: none; border-radius: 8px; font-size: 9px; cursor: pointer; font-weight: bold; text-transform: uppercase; }
-    .btn-edit { background: #e2e8f0; color: #475569; }
-    .btn-child { background: #3b82f6; color: white; }
-    .btn-spouse { background: #10b981; color: white; }
-    .btn-delete { background: #ef4444; color: white; grid-column: span 2; }
+    .name-tag { font-weight: 800; font-size: 15px; color: var(--text); }
+    .btn { padding: 6px 4px; border: none; border-radius: 6px; font-size: 8px; cursor: pointer; font-weight: bold; text-transform: uppercase; }
+    .btn-edit { background: #e2e8f0; } .btn-child { background: #3b82f6; color: white; } .btn-spouse { background: #10b981; color: white; } .btn-del { background: #ef4444; color: white; grid-column: span 2; }
+    .node-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 10px; }
   </style>
 </head>
 <body>
-  <div class="header"><h2>The Daaboul Family Tree</h2></div>
+  <div class="header"><h3>Daaboul Family Tree</h3></div>
   <div class="toolbar">
-    <button class="btn btn-edit" onclick="resetView()">🏠 Home</button>
-    <button class="btn btn-child" style="padding: 8px 15px;" onclick="document.getElementById('fileIn').click()">📂 Load File</button>
-    <button class="btn btn-spouse" style="padding: 8px 15px;" onclick="exportData()">💾 Backup</button>
-    <input type="file" id="fileIn" style="display:none" onchange="importData(event)">
+    <button class="btn" onclick="resetView()">🏠 Home</button>
+    <button class="btn" style="background:#475569;color:white" onclick="document.getElementById('f').click()">📂 Load File</button>
+    <button class="btn" style="background:#0f172a;color:white" onclick="exportData()">💾 Backup</button>
+    <input type="file" id="f" style="display:none" onchange="importData(event)">
   </div>
   <div id="viewport"><div id="tree-container" class="tree"></div></div>
 
@@ -51,64 +45,61 @@
       storageBucket: "daaboul-family-tree.firebasestorage.app",
       messagingSenderId: "169162734833",
       appId: "1:169162734833:web:233a37139441336023bd50",
-      measurementId: "G-GENYMJ5HH6",
       databaseURL: "https://daaboul-family-tree-default-rtdb.firebaseio.com"
     };
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database().ref('familyTree');
     let familyData = [];
-    const container = document.getElementById('tree-container');
 
-    // Cloud Listener
-    db.on('value', (snap) => { 
-      if(snap.val()) { 
-        familyData = snap.val(); 
-        render(); 
-      } 
+    // Auto-Sync from Cloud
+    db.on('value', snap => {
+      const data = snap.val();
+      if(data) {
+        familyData = data;
+        render();
+      } else {
+        console.log("Cloud is empty");
+      }
     });
 
     function save() { db.set(familyData); }
 
     function importData(e) {
-      const reader = new FileReader();
-      reader.onload = (ev) => {
+      const r = new FileReader();
+      r.onload = ev => {
         familyData = JSON.parse(ev.target.result);
-        render(); 
+        render();
         save();
-        alert("Synced to Cloud! Your tablet should update in a few seconds.");
+        alert("Synced! Tablet should update now.");
       };
-      reader.readAsText(e.target.files[0]);
+      r.readAsText(e.target.files[0]);
     }
 
     function editPerson(id) {
       const p = familyData.find(x => x.id === id);
-      p.name = prompt("Full Name:", p.name) || p.name;
-      p.dob = prompt("Birth Year:", p.dob || "");
-      p.gender = (prompt("Gender (male/female):", p.gender || "male")).toLowerCase();
-      p.photo = prompt("Paste Photo URL (Link):", p.photo || "");
+      p.name = prompt("Name:", p.name);
+      p.dob = prompt("Year:", p.dob || "");
+      p.gender = (prompt("Gender:", p.gender || "male")).toLowerCase();
+      p.photo = prompt("Photo URL:", p.photo || "");
       save();
-    }
-
-    function addChild(pid) {
-      const name = prompt("Child Name:");
-      if(name) { 
-        familyData.push({id: Date.now(), name, dob: "", gender: "male", parentId: pid}); 
-        save(); 
-      }
     }
 
     function addSpouse(id) {
       const p = familyData.find(x => x.id === id);
       p.spouseName = prompt("Spouse Name:");
-      p.spouseDOB = prompt("Spouse Birth Year:");
       p.spouseGender = "female";
-      p.spousePhoto = prompt("Paste Spouse Photo URL (Link):", "");
+      p.spousePhoto = prompt("Spouse Photo URL:");
       save();
     }
 
-    function deletePerson(id) {
-      if(confirm("Are you sure you want to delete this person?")) {
+    function addChild(pid) {
+      const n = prompt("Child Name:");
+      if(n) { familyData.push({id: Date.now(), name: n, gender: "male", parentId: pid, dob: ""}); save(); }
+    }
+
+    function deleteNode(id) {
+      if(confirm("Delete this person?")) {
         familyData = familyData.filter(x => x.id !== id && x.parentId !== id);
         save();
       }
@@ -117,37 +108,36 @@
     function render() {
       const build = (pid) => {
         const items = familyData.filter(x => x.parentId === pid);
-        if (!items.length) return "";
+        if(!items.length) return "";
         let h = "<ul>";
         items.forEach(m => {
           const hasS = !!m.spouseName;
           h += `<li><div class="tree-node">
             <div class="avatar-pair">
-              <div class="node-avatar ${m.gender}" style="background-image: url('${m.photo || ''}')">${m.photo ? '' : m.name[0]}</div>
-              ${hasS ? `<div class="node-avatar ${m.spouseGender}" style="background-image: url('${m.spousePhoto || ''}')">${m.spousePhoto ? '' : m.spouseName[0]}</div>` : ''}
+              <div class="node-avatar ${m.gender}" style="background-image:url('${m.photo || ''}')">${m.photo ? '' : (m.name ? m.name[0] : '?')}</div>
+              ${hasS ? `<div class="node-avatar ${m.spouseGender}" style="background-image:url('${m.spousePhoto || ''}')">${m.spousePhoto ? '' : m.spouseName[0]}</div>` : ''}
             </div>
-            <div class="name-tag">${m.name} ${hasS ? '& '+m.spouseName : ''}</div>
-            <div class="year-tag">${m.dob || ''} ${hasS && m.spouseDOB ? '| ' + m.spouseDOB : ''}</div>
+            <div class="name-tag">${m.name || 'Unknown'} ${hasS ? '& '+m.spouseName : ''}</div>
             <div class="node-actions">
               <button class="btn btn-edit" onclick="editPerson(${m.id})">Edit</button>
               <button class="btn btn-child" onclick="addChild(${m.id})">+Child</button>
               <button class="btn btn-spouse" onclick="addSpouse(${m.id})">+Spouse</button>
-              <button class="btn btn-delete" onclick="deletePerson(${m.id})">🗑 Delete</button>
-            </div></div>${build(m.id)}</li>`;
+              <button class="btn btn-del" onclick="deleteNode(${m.id})">Delete</button>
+            </div>
+          </div>${build(m.id)}</li>`;
         });
         return h + "</ul>";
       };
-      container.innerHTML = build(null);
+      document.getElementById('tree-container').innerHTML = build(null);
     }
 
-    // Zoom and Pan logic
-    let scale = 1, pointX = 0, pointY = 0, start = { x: 0, y: 0 }, isDragging = false;
-    function resetView() { scale = 1; pointX = 0; pointY = 0; updateTransform(); }
-    window.onmousedown = (e) => { if (e.target.closest('.btn')) return; isDragging = true; start = { x: e.clientX - pointX, y: e.clientY - pointY }; };
-    window.onmousemove = (e) => { if (!isDragging) return; pointX = e.clientX - start.x; pointY = e.clientY - start.y; updateTransform(); };
-    window.onmouseup = () => isDragging = false;
-    function updateTransform() { container.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`; }
-
+    // Panning/Zooming
+    let s=1, x=0, y=0, st={x:0,y:0}, isD=false;
+    function resetView(){ s=1; x=0; y=0; up(); }
+    window.onmousedown = e => { if(e.target.closest('.btn'))return; isD=true; st={x:e.clientX-x, y:e.clientY-y}; };
+    window.onmousemove = e => { if(!isD)return; x=e.clientX-st.x; y=e.clientY-st.y; up(); };
+    window.onmouseup = () => isD=false;
+    function up(){ document.getElementById('tree-container').style.transform = `translate(${x}px, ${y}px) scale(${s})`; }
     function exportData() {
       const a = document.createElement('a');
       a.href = URL.createObjectURL(new Blob([JSON.stringify(familyData)], {type:"application/json"}));
