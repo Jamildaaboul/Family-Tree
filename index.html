@@ -8,8 +8,11 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
   <style>
     :root { 
-      --spring-light: #fdfbf7; 
-      --spring-bg: #f4eee1;
+      /* NEW PASTEL SPRING BACKGROUND COLORS */
+      --pastel-blush: #fff0f5; /* Soft Blossom Pink */
+      --pastel-sky: #eaf4f4;   /* Pale Spring Sky/Mint */
+      --pastel-mint: #f0fdf4;  /* Fresh Pastel Green */
+      
       --vine-green: #8b9a73; 
       --gold-main: #cda85f; 
       --plaque-bg: #fffdfa;
@@ -21,8 +24,9 @@
     
     html, body { 
       font-family: 'Georgia', serif; 
-      background: radial-gradient(circle, #fdfbf7 0%, var(--spring-bg) 100%);
-      background-image: url('https://www.transparenttextures.com/patterns/cream-paper.png'), radial-gradient(circle, #fdfbf7 0%, var(--spring-bg) 100%);
+      /* Dreamy pastel spring gradient */
+      background: radial-gradient(circle at top left, var(--pastel-blush) 0%, var(--pastel-sky) 50%, var(--pastel-mint) 100%);
+      background-image: url('https://www.transparenttextures.com/patterns/cream-paper.png'), radial-gradient(circle at top left, var(--pastel-blush) 0%, var(--pastel-sky) 50%, var(--pastel-mint) 100%);
       margin: 0; padding: 0; overflow: hidden; 
       height: 100%; width: 100%; touch-action: none; 
     }
@@ -40,7 +44,7 @@
       font-size: 28px; letter-spacing: 1px;
       text-shadow: 1px 1px 0px #fff;
       padding: 5px 30px; border: 2px solid var(--gold-main); border-radius: 20px; 
-      background: linear-gradient(180deg, #fff 0%, var(--spring-bg) 100%);
+      background: linear-gradient(180deg, #fff 0%, var(--pastel-sky) 100%);
       box-shadow: 0 4px 6px rgba(0,0,0,0.05);
     }
 
@@ -118,7 +122,7 @@
       width: 65px; height: 65px; 
       border-radius: 50%; 
       border: 2px solid var(--gold-main); 
-      background: linear-gradient(135deg, #fff, var(--spring-bg));
+      background: linear-gradient(135deg, #fff, var(--pastel-blush));
       display: flex; align-items: center; justify-content: center;
       font-family: "Lucida Calligraphy", cursive, serif; font-size: 28px; font-weight: 900;
       cursor: pointer; position: relative; 
@@ -142,7 +146,7 @@
     }
     
     /* --------------------------------------------------- */
-    /* UPDATED: VIBRANT SPRING BUTTONS                     */
+    /* VIBRANT SPRING BUTTONS                              */
     /* --------------------------------------------------- */
     .btn { 
       padding: 4px 10px; border: 1px solid rgba(0,0,0,0.15); border-radius: 12px; 
@@ -153,7 +157,6 @@
     }
     .btn:active { transform: scale(0.95); }
     
-    /* More distinct/vibrant Spring Colors */
     .btn-edit   { background: #a2cbf0; } /* Clear Sky Blue */
     .btn-child  { background: #b0e5b0; } /* Fresh Spring Green */
     .btn-spouse { background: #fce0a2; } /* Sunny Buttercup Yellow */
