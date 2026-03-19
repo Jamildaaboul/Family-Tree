@@ -3,100 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Family Tree</title>
+    <title>Jamil's Family Tree</title>
     <style>
         :root {
-            --bg-color: #f4efdf;
-            --tree-brown: #4a332d;
-            --btn-gray: #dcdbd9;
+            --paper: #f1ebd9;
+            --trunk: #3d2b1f;
             --btn-green: #2e7d32;
-            --btn-brown: #795548;
             --btn-red: #c62828;
-            --circle-blue: #5b7c89;
-            --circle-pink: #a64d79;
+            --btn-brown: #795548;
+            --btn-gray: #dcdbd9;
         }
 
         body {
-            background-color: var(--bg-color);
-            background-image: url("https://www.transparenttextures.com/patterns/natural-paper.png");
+            background-color: var(--paper);
+            background-image: url('https://www.transparenttextures.com/patterns/natural-paper.png');
             margin: 0;
-            padding: 40px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            min-height: 150vh;
         }
 
-        /* The Tree Graphic Container */
-        #tree-container {
+        h1 { color: var(--trunk); margin-top: 40px; font-size: 2.5rem; }
+
+        /* The canvas where the tree lives */
+        #tree-canvas {
             position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            max-width: 800px;
+            width: 900px;
+            height: 1200px;
+            margin-top: 50px;
         }
 
-        /* SVG Background Tree Branches */
-        .tree-svg {
+        /* Drawing the tree with SVG to match your image exactly */
+        #tree-graphic {
             position: absolute;
             top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 600px;
+            left: 0;
+            width: 100%;
             height: 100%;
-            z-index: 0;
-            opacity: 0.8;
-            pointer-events: none;
+            z-index: 1;
         }
 
         .card {
+            position: absolute; /* Allows exact placement on branches */
             background: white;
-            border: 2px solid var(--tree-brown);
-            border-radius: 18px;
-            width: 320px;
-            padding: 20px;
-            margin-bottom: 60px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-            position: relative;
-            z-index: 1;
+            border: 2px solid var(--trunk);
+            border-radius: 20px;
+            width: 300px;
+            padding: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            z-index: 10;
             text-align: center;
-            transition: transform 0.2s;
         }
 
-        .initials-row {
+        .initials {
             display: flex;
             justify-content: center;
             gap: 15px;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .circle {
-            width: 65px;
-            height: 65px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             border: 2px solid;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
+            font-size: 24px;
             font-weight: bold;
-            color: #333;
-            background: #fff;
         }
 
-        .male { border-color: var(--circle-blue); }
-        .female { border-color: var(--circle-pink); }
+        .male { border-color: #5b7c89; color: #333; }
+        .female { border-color: #a64d79; color: #333; }
 
-        .name-text {
-            font-size: 18px;
+        .name-label {
             font-weight: 800;
-            color: #1a1a1a;
+            font-size: 1.1rem;
             margin-bottom: 15px;
+            color: #1a1a1a;
         }
 
-        .button-grid {
+        .grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 8px;
@@ -111,96 +101,88 @@
             color: white;
             cursor: pointer;
             text-transform: uppercase;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        .btn-edit { background-color: var(--btn-gray); color: #444; }
-        .btn-child { background-color: var(--btn-green); }
-        .btn-spouse { background-color: var(--btn-brown); }
-        .btn-del { background-color: var(--btn-red); }
+        .btn-edit { background: var(--btn-gray); color: #444; }
+        .btn-child { background: var(--btn-green); }
+        .btn-spouse { background: var(--btn-brown); }
+        .btn-del { background: var(--btn-red); }
 
         .btn:hover { filter: brightness(1.1); }
-        .btn:active { transform: translateY(1px); }
-
     </style>
 </head>
 <body>
 
-    <h2 style="color: var(--tree-brown); margin-bottom: 30px;">Our Family Tree</h2>
+    <h1>Our Family Tree</h1>
 
-    <div id="tree-container">
-        <svg class="tree-svg" viewBox="0 0 200 600" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M100 600V0M100 450C100 450 140 400 160 380M100 450C100 450 60 400 40 380M100 250C100 250 150 180 180 150M100 250C100 250 50 180 20 150" stroke="#4a332d" stroke-width="6" stroke-linecap="round"/>
+    <div id="tree-canvas">
+        <svg id="tree-graphic" viewBox="0 0 900 1200">
+            <path d="M450 1200 Q 450 800 450 400" stroke="#3d2b1f" stroke-width="12" fill="none" />
+            <path d="M450 800 Q 300 700 150 750" stroke="#3d2b1f" stroke-width="8" fill="none" />
+            <path d="M450 800 Q 600 700 750 750" stroke="#3d2b1f" stroke-width="8" fill="none" />
+            <path d="M450 500 Q 350 400 250 350" stroke="#3d2b1f" stroke-width="6" fill="none" />
+            <path d="M450 500 Q 550 400 650 350" stroke="#3d2b1f" stroke-width="6" fill="none" />
         </svg>
 
-        <div id="family-list" style="width: 100%; display: flex; flex-direction: column; align-items: center;"></div>
+        <div id="card-layer"></div>
     </div>
 
 <script>
-    // Initial Data
+    // Data with X and Y coordinates for placement on the branches
     let family = [
-        { id: 1, name1: "Jamil Joseph Daaboul", name2: "Nazira" },
-        { id: 2, name1: "Joseph", name2: "Marie" },
-        { id: 3, name1: "Jamil", name2: "Carol" }
+        { id: 1, n1: "Jamil Joseph Daaboul", n2: "Nazira", x: 300, y: 50 },
+        { id: 2, n1: "Joseph", n2: "Marie", x: 20, y: 650 },
+        { id: 3, n1: "Jamil", n2: "Carol", x: 580, y: 650 }
     ];
 
-    const familyList = document.getElementById('family-list');
-
-    function getInitial(name) {
-        return name ? name.trim().charAt(0).toUpperCase() : "?";
-    }
-
-    function renderTree() {
-        familyList.innerHTML = '';
-        family.forEach(member => {
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.innerHTML = `
-                <div class="initials-row">
-                    <div class="circle male">${getInitial(member.name1)}</div>
-                    <div class="circle female">${getInitial(member.name2)}</div>
+    function render() {
+        const layer = document.getElementById('card-layer');
+        layer.innerHTML = '';
+        family.forEach(m => {
+            const div = document.createElement('div');
+            div.className = 'card';
+            div.style.left = m.x + 'px';
+            div.style.top = m.y + 'px';
+            div.innerHTML = `
+                <div class="initials">
+                    <div class="circle male">${m.n1[0]}</div>
+                    <div class="circle female">${m.n2[0] || '?'}</div>
                 </div>
-                <div class="name-text">${member.name1} & ${member.name2}</div>
-                <div class="button-grid">
-                    <button class="btn btn-edit" onclick="editNode(${member.id})">EDIT</button>
-                    <button class="btn btn-child" onclick="addChild()">+CHILD</button>
-                    <button class="btn btn-spouse" onclick="alert('Spouse function triggered')">+SPOUSE</button>
-                    <button class="btn btn-del" onclick="deleteNode(${member.id})">DEL</button>
+                <div class="name-label">${m.n1} & ${m.n2}</div>
+                <div class="grid">
+                    <button class="btn btn-edit" onclick="edit(${m.id})">Edit</button>
+                    <button class="btn btn-child" onclick="add()">+Child</button>
+                    <button class="btn btn-spouse" onclick="alert('Add Spouse')">+Spouse</button>
+                    <button class="btn btn-del" onclick="del(${m.id})">Del</button>
                 </div>
             `;
-            familyList.appendChild(card);
+            layer.appendChild(div);
         });
     }
 
-    // BUTTON FUNCTIONS
-    window.editNode = function(id) {
-        const person = family.find(f => f.id === id);
-        const n1 = prompt("Update First Name:", person.name1);
-        const n2 = prompt("Update Second Name:", person.name2);
-        if (n1 !== null) person.name1 = n1;
-        if (n2 !== null) person.name2 = n2;
-        renderTree();
+    window.edit = (id) => {
+        const p = family.find(f => f.id === id);
+        p.n1 = prompt("Husband:", p.n1) || p.n1;
+        p.n2 = prompt("Wife:", p.n2) || p.n2;
+        render();
     };
 
-    window.addChild = function() {
-        const name1 = prompt("New Person Name:", "New Member");
-        const name2 = prompt("Partner Name:", "Partner");
-        if (name1) {
-            family.push({ id: Date.now(), name1: name1, name2: name2 || "" });
-            renderTree();
+    window.add = () => {
+        const name = prompt("Name:");
+        if(name) {
+            family.push({ id: Date.now(), n1: name, n2: "", x: 300, y: 400 });
+            render();
         }
     };
 
-    window.deleteNode = function(id) {
-        if (confirm("Are you sure you want to delete this branch?")) {
+    window.del = (id) => {
+        if(confirm("Delete?")) {
             family = family.filter(f => f.id !== id);
-            renderTree();
+            render();
         }
     };
 
-    // Initial Start
-    renderTree();
+    render();
 </script>
-
 </body>
 </html>
