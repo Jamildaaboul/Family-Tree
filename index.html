@@ -3,23 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jamil's Interactive Family Tree</title>
+    <title>Family Tree Design</title>
     <style>
         :root {
-            --tree-brown: #4a3728;
-            --btn-green: #2d7d32;
-            --btn-red: #c62828;
+            --bg-color: #f7f5f2;
+            --card-border: #4a332d;
+            --trunk-color: #4a332d;
+            --btn-gray: #dcdbd9;
+            --btn-green: #2e7d32;
             --btn-brown: #795548;
-            --btn-gray: #e0dedb;
-            --border-male: #5b7c89;
-            --border-female: #a64d79;
+            --btn-red: #c62828;
+            --circle-blue: #5b7c89;
+            --circle-pink: #a64d79;
         }
 
         body {
-            background-color: #fdfaf5;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            font-family: 'Segoe UI', Arial, sans-serif;
             margin: 0;
-            padding: 50px;
+            padding: 50px 0;
             display: flex;
             justify-content: center;
         }
@@ -28,166 +30,120 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 60px; /* Space for the "branches" */
             position: relative;
         }
 
-        /* The Card Design */
-        .family-card {
-            background: white;
-            border: 2px solid var(--tree-brown);
-            border-radius: 15px;
-            padding: 20px;
-            width: 280px;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-            text-align: center;
-            position: relative;
-            z-index: 2;
-        }
-
-        /* Vertical connectors (Branches) */
-        .family-card:not(:last-child)::after {
+        /* The vertical trunk line */
+        #tree-container::before {
             content: '';
             position: absolute;
-            bottom: -62px;
-            left: 50%;
+            top: 0;
+            bottom: 0;
             width: 4px;
-            height: 60px;
-            background: var(--tree-brown);
-            transform: translateX(-50%);
+            background-color: var(--trunk-color);
+            z-index: 0;
+        }
+
+        .card {
+            background: white;
+            border: 2px solid var(--card-border);
+            border-radius: 20px;
+            width: 340px;
+            padding: 25px;
+            margin-bottom: 60px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            position: relative;
             z-index: 1;
+            text-align: center;
         }
 
         .initials-row {
             display: flex;
             justify-content: center;
             gap: 15px;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
         }
 
         .circle {
-            width: 60px;
-            height: 60px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
             border: 2px solid;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 26px;
+            font-size: 30px;
             font-weight: bold;
-            background: #fff;
+            color: #333;
         }
 
-        .male { border-color: var(--border-male); color: #333; }
-        .female { border-color: var(--border-female); color: #333; }
+        .male { border-color: var(--circle-blue); }
+        .female { border-color: var(--circle-pink); }
 
-        .names-label {
-            font-weight: 700;
-            font-size: 18px;
-            margin-bottom: 15px;
-            color: #222;
+        .name-text {
+            font-size: 20px;
+            font-weight: 800;
+            color: #1a1a1a;
+            margin-bottom: 20px;
         }
 
-        /* Button Grid */
         .button-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 8px;
+            gap: 12px;
         }
 
         .btn {
             border: none;
-            border-radius: 6px;
-            padding: 10px 0;
-            font-size: 12px;
-            font-weight: 800;
+            border-radius: 8px;
+            padding: 12px 0;
+            font-size: 13px;
+            font-weight: 900;
             color: white;
             cursor: pointer;
             text-transform: uppercase;
-            transition: opacity 0.2s;
         }
 
-        .btn:hover { opacity: 0.8; }
-
-        .btn-edit   { background-color: var(--btn-gray); color: #444; }
-        .btn-child  { background-color: var(--btn-green); }
+        .btn-edit { background-color: var(--btn-gray); color: #444; }
+        .btn-child { background-color: var(--btn-green); }
         .btn-spouse { background-color: var(--btn-brown); }
-        .btn-del    { background-color: var(--btn-red); }
+        .btn-red { background-color: var(--btn-red); }
 
+        /* Hover effect */
+        .btn:hover { filter: brightness(90%); }
     </style>
 </head>
 <body>
 
-    <div id="tree-container">
+<div id="tree-container">
+    <div class="card">
+        <div class="initials-row">
+            <div class="circle male">J</div>
+            <div class="circle female">N</div>
         </div>
+        <div class="name-text">Jamil Joseph Daaboul & Nazira</div>
+        <div class="button-grid">
+            <button class="btn btn-edit">EDIT</button>
+            <button class="btn btn-child">+CHILD</button>
+            <button class="btn btn-spouse">+SPOUSE</button>
+            <button class="btn btn-red">DEL</button>
+        </div>
+    </div>
 
-    <script>
-        // Sample Data based on your image
-        const familyData = [
-            { id: 1, name1: "Jamil Joseph Daaboul", name2: "Nazira" },
-            { id: 2, name1: "Joseph", name2: "Marie" },
-            { id: 3, name1: "Jamil", name2: "Carol" }
-        ];
+    <div class="card">
+        <div class="initials-row">
+            <div class="circle male">J</div>
+            <div class="circle female">M</div>
+        </div>
+        <div class="name-text">Joseph & Marie</div>
+        <div class="button-grid">
+            <button class="btn btn-edit">EDIT</button>
+            <button class="btn btn-child">+CHILD</button>
+            <button class="btn btn-spouse">+SPOUSE</button>
+            <button class="btn btn-red">DEL</button>
+        </div>
+    </div>
+</div>
 
-        const container = document.getElementById('tree-container');
-
-        function getInitial(name) {
-            return name ? name.trim().charAt(0).toUpperCase() : "?";
-        }
-
-        function renderTree() {
-            container.innerHTML = '';
-            familyData.forEach(member => {
-                const card = document.createElement('div');
-                card.className = 'family-card';
-                
-                card.innerHTML = `
-                    <div class="initials-row">
-                        <div class="circle male">${getInitial(member.name1)}</div>
-                        <div class="circle female">${getInitial(member.name2)}</div>
-                    </div>
-                    <div class="names-label">${member.name1} & ${member.name2}</div>
-                    <div class="button-grid">
-                        <button class="btn btn-edit" onclick="editMember(${member.id})">Edit</button>
-                        <button class="btn btn-child" onclick="addChild(${member.id})">+Child</button>
-                        <button class="btn btn-spouse" onclick="addSpouse(${member.id})">+Spouse</button>
-                        <button class="btn btn-del" onclick="deleteMember(${member.id})">Del</button>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        // Action Functions
-        function editMember(id) {
-            const member = familyData.find(m => m.id === id);
-            const newName1 = prompt("Enter first name:", member.name1);
-            const newName2 = prompt("Enter second name:", member.name2);
-            if (newName1 !== null) member.name1 = newName1;
-            if (newName2 !== null) member.name2 = newName2;
-            renderTree();
-        }
-
-        function addChild(id) {
-            const newId = familyData.length + 1;
-            familyData.push({ id: newId, name1: "New", name2: "Member" });
-            renderTree();
-        }
-
-        function deleteMember(id) {
-            const index = familyData.findIndex(m => m.id === id);
-            if (index > -1 && confirm("Are you sure?")) {
-                familyData.splice(index, 1);
-                renderTree();
-            }
-        }
-
-        function addSpouse(id) {
-            alert("Spouse logic can be added here!");
-        }
-
-        // Initial load
-        renderTree();
-    </script>
 </body>
 </html>
