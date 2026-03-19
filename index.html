@@ -8,30 +8,27 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
   <style>
     :root { 
-      /* Light, airy spring palette */
-      --spring-light: #fdfbf7; 
+      var(--spring-light): #fdfbf7; 
       --spring-bg: #f4eee1;
-      --vine-green: #8b9a73; /* Soft sage green for the branches */
-      --gold-main: #cda85f; /* Soft antique gold */
+      --vine-green: #8b9a73; 
+      --gold-main: #cda85f; 
       --plaque-bg: #fffdfa;
       --button-bg: #e4d8c8;
-      --text-dark: #3e2b1d; /* Rich espresso for readability */
+      --text-dark: #3e2b1d; 
       --ink: #8b0000; 
       --ink-blue: #002244; 
     }
     
     html, body { 
       font-family: 'Georgia', serif; 
-      /* Bright, vintage parchment background */
-      background: radial-gradient(circle, var(--spring-light) 0%, var(--spring-bg) 100%);
-      background-image: url('https://www.transparenttextures.com/patterns/cream-paper.png'), radial-gradient(circle, var(--spring-light) 0%, var(--spring-bg) 100%);
+      background: radial-gradient(circle, #fdfbf7 0%, var(--spring-bg) 100%);
+      background-image: url('https://www.transparenttextures.com/patterns/cream-paper.png'), radial-gradient(circle, #fdfbf7 0%, var(--spring-bg) 100%);
       margin: 0; padding: 0; overflow: hidden; 
       height: 100%; width: 100%; touch-action: none; 
     }
     
     .interface-layer { 
       position: fixed; top: 0; left: 0; right: 0; z-index: 999999; 
-      /* Light, frosted glass effect for the top menu */
       background: rgba(253, 251, 247, 0.95); padding: 15px; 
       display: flex; flex-direction: column; align-items: center; gap: 10px; 
       box-shadow: 0 4px 15px rgba(0,0,0,0.1); pointer-events: auto;
@@ -57,10 +54,10 @@
 
     #viewport { width: 100vw; height: 100vh; cursor: grab; position: absolute; top: 0; left: 0; z-index: 100; overflow: hidden; }
     
-    /* UNBREAKABLE HORIZONTAL LAYOUT */
     #tree-container { 
       position: absolute; left: 0; top: 0; transform-origin: 0 0; 
       width: max-content !important; min-width: 100vw; padding: 160px 100px 150px 100px; 
+      display: flex; justify-content: center;
     }
 
     .tree ul { 
@@ -77,11 +74,10 @@
       flex: 0 0 auto !important; width: max-content !important; 
     }
     
-    /* ORGANIC SAGE GREEN VINES (Restored curves) */
     .tree li::before, .tree li::after { 
       content: ''; position: absolute; top: 0; right: 50%; 
       border-top: 3px solid var(--vine-green); width: 50%; height: 45px; 
-      border-radius: 25px 0 0 0; /* Smooth organic curves */
+      border-radius: 25px 0 0 0; 
       box-shadow: 0 2px 3px rgba(0,0,0,0.05); 
     }
     .tree li::after { 
@@ -99,12 +95,11 @@
       margin-left: -1.5px;
     }
 
-    /* LIGHT BOTANICAL PLAQUES */
     .tree-node { 
       background: var(--plaque-bg);
       background-image: url('https://www.transparenttextures.com/patterns/cream-paper.png');
       border: 3px solid var(--gold-main); 
-      border-radius: 30px; /* Soft, pill-like rounding */
+      border-radius: 30px; 
       min-width: 160px;
       padding: 15px 25px 25px 25px; 
       display: inline-flex !important; flex-direction: column; align-items: center; gap: 10px;
@@ -119,10 +114,9 @@
 
     .avatar-pair { display: flex; justify-content: center; align-items: center; gap: 8px; margin: 0; }
     
-    /* ROUND PORTRAITS (Like the reference image) */
     .node-avatar { 
       width: 65px; height: 65px; 
-      border-radius: 50%; /* Restored to perfect circles */
+      border-radius: 50%; 
       border: 2px solid var(--gold-main); 
       background: linear-gradient(135deg, #fff, var(--spring-bg));
       display: flex; align-items: center; justify-content: center;
@@ -139,7 +133,6 @@
     
     .node-info { display: flex; flex-direction: column; align-items: center; text-align: center; }
     
-    /* DARK TEXT FOR LIGHT BACKGROUND */
     .name-tag { font-family: 'Georgia', serif; font-weight: bold; font-size: 18px; color: var(--text-dark); margin: 5px 0 2px 0; line-height: 1.2; }
     .dob-tag { font-family: 'Georgia', serif; font-size: 14px; color: #7a6352; font-weight: normal; margin-bottom: 0; font-style: italic; }
 
@@ -147,7 +140,6 @@
       display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; 
       position: absolute; bottom: -14px; width: 120%;
     }
-    /* EARTHY, LIGHT BUTTONS */
     .btn { 
       padding: 4px 10px; border: 1px solid var(--gold-main); border-radius: 12px; 
       font-size: 9px; cursor: pointer; font-weight: bold; text-transform: uppercase; 
@@ -161,7 +153,6 @@
     .zoom-btn { width: 45px; height: 45px; border-radius: 50%; border: 1px solid var(--vine-green); background: #fff; color: var(--vine-green); font-size: 26px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; touch-action: manipulation; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
     .zoom-btn:active { transform: scale(0.9); background: var(--button-bg); }
     
-    /* GENTLE SEARCH HIGHLIGHT */
     .highlighted { 
       background-color: #fff !important; 
       border-color: var(--vine-green) !important;
@@ -170,7 +161,6 @@
       z-index: 999 !important; 
     }
 
-    /* VIEW MODE STYLES */
     body.view-mode .node-actions { display: none !important; }
     body.view-mode .node-avatar::after { display: none !important; }
 
@@ -196,4 +186,220 @@
       <button class="btn" id="viewModeBtn" style="background:#fff; padding: 8px 12px; font-size: 11px; border: 1px solid var(--vine-green);" onclick="toggleViewMode()">👁️ View Mode</button>
       
       <button class="btn" style="background:var(--vine-green); color:#fff; padding: 8px 12px; font-size: 11px; border: none;" onclick="resetView()">🏠 Home</button>
-      <button class="btn" style="background:var(--button-bg); padding: 8px 1
+      <button class="btn" style="background:var(--button-bg); padding: 8px 12px; font-size: 11px; border: 1px solid var(--gold-main);" onclick="document.getElementById('fileIn').click()">📂 Load</button>
+      <button class="btn" style="background:var(--text-dark); color:#fff; padding: 8px 12px; font-size: 11px; border: none;" onclick="window.print()">🖨️ Save PDF</button>
+      
+      <input type="file" id="fileIn" style="display:none" onchange="importData(event)">
+      <input type="file" id="imagePicker" style="display:none" accept="image/*">
+    </div>
+  </div>
+
+  <div id="viewport">
+    <div id="tree-container" class="tree">
+      <h3 style='color:var(--text-dark); margin-top: 150px; font-family: "Lucida Calligraphy", cursive;'>Connecting to Database...</h3>
+    </div>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCT9sltvZJpDKz8x-y5pI7ABSu7GD3792c",
+      authDomain: "daaboul-family-tree.firebaseapp.com",
+      projectId: "daaboul-family-tree",
+      storageBucket: "daaboul-family-tree.firebasestorage.app",
+      messagingSenderId: "169162734833",
+      appId: "1:169162734833:web:233a37139441336023bd50",
+      databaseURL: "https://daaboul-family-tree-default-rtdb.firebaseio.com"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database().ref('familyTree');
+    let familyData = [];
+    let activeTarget = null;
+    let isFirstLoad = true;
+
+    db.on('value', snap => {
+      const data = snap.val();
+      if(data) {
+        // CRASH PROTECTION: Filters out nulls or undefined entries that break the code
+        let rawData = Array.isArray(data) ? data : Object.values(data);
+        familyData = rawData.filter(x => x !== null && x !== undefined);
+        render();
+      } else {
+        familyData = [];
+        render();
+      }
+    });
+
+    function save() { db.set(familyData); }
+
+    function runSearch() {
+      const term = document.getElementById('searchBox').value.toLowerCase();
+      document.querySelectorAll('.tree-node').forEach(node => {
+        const name = node.querySelector('.name-tag').innerText.toLowerCase();
+        node.classList.toggle('highlighted', term.length > 0 && name.includes(term));
+      });
+    }
+
+    function toggleViewMode() {
+      document.body.classList.toggle('view-mode');
+      const btn = document.getElementById('viewModeBtn');
+      if (document.body.classList.contains('view-mode')) {
+        btn.innerHTML = '✏️ Edit Mode';
+        btn.style.background = '#e3a9a9'; 
+        btn.style.color = '#5a1818';
+      } else {
+        btn.innerHTML = '👁️ View Mode';
+        btn.style.background = '#fff';
+        btn.style.color = 'var(--text-dark)';
+      }
+    }
+
+    function render() {
+      if (!familyData || familyData.length === 0) {
+        document.getElementById('tree-container').innerHTML = "<h3 style='color:var(--text-dark); margin-top: 150px; font-family: \"Lucida Calligraphy\", cursive;'>Tree is empty. Click LOAD to upload backup.</h3>";
+        return;
+      }
+
+      const allIds = new Set(familyData.map(x => x.id));
+      let roots = familyData.filter(x => !x.parentId || !allIds.has(x.parentId));
+      if (roots.length === 0) roots = [familyData[0]];
+
+      const build = (nodes) => {
+        if(!nodes || nodes.length === 0) return "";
+        let h = "<ul>";
+        nodes.forEach(m => {
+          if (!m) return; // EXTRA CRASH PROTECTION
+
+          const hasS = !!m.spouseName;
+          const p1 = m.photo ? `style="background-image:url('${m.photo}')"` : '';
+          const p2 = m.spousePhoto ? `style="background-image:url('${m.spousePhoto}')"` : '';
+          const c1 = m.photo ? 'has-photo' : '';
+          const c2 = m.spousePhoto ? 'has-photo' : '';
+          
+          const l1 = (m.name && m.name.length > 0) ? m.name[0].toUpperCase() : '?';
+          const l2 = (hasS && m.spouseName && m.spouseName.length > 0) ? m.spouseName[0].toUpperCase() : '?';
+          
+          const dob1 = m.dob || '';
+          const dob2 = (hasS && m.spouseDOB) ? m.spouseDOB : '';
+          const dobDisplay = (dob1 && dob2) ? `${dob1} & ${dob2}` : (dob1 || dob2);
+
+          const children = familyData.filter(x => x.parentId == m.id);
+
+          h += `<li>
+            <div class="tree-node" id="node-${m.id}">
+              <div class="avatar-pair">
+                <div class="node-avatar ${m.gender} ${c1}" ${p1} onclick="pickNewFile(${m.id}, false)">${m.photo ? '' : l1}</div>
+                ${hasS ? `<div class="crest-icon">❀</div><div class="node-avatar ${m.spouseGender || 'female'} ${c2}" ${p2} onclick="pickNewFile(${m.id}, true)">${m.spousePhoto ? '' : l2}</div>` : ''}
+              </div>
+              <div class="node-info">
+                <span class="name-tag">${m.name || 'Unknown'}${hasS ? ' & ' + m.spouseName : ''}</span>
+                <span class="dob-tag">${dobDisplay}</span>
+              </div>
+              <div class="node-actions">
+                <button class="btn" onclick="editP(${m.id})">Edit</button>
+                <button class="btn" onclick="addC(${m.id})">+Child</button>
+                <button class="btn" onclick="addS(${m.id})">+Spouse</button>
+                <button class="btn btn-red" onclick="delP(${m.id})">Del</button>
+              </div>
+            </div>
+            ${build(children)}
+          </li>`;
+        });
+        return h + "</ul>";
+      };
+
+      document.getElementById('tree-container').innerHTML = build(roots);
+
+      if(isFirstLoad) {
+        setTimeout(centerOnRoot, 100); 
+        setTimeout(centerOnRoot, 500);
+        isFirstLoad = false;
+      }
+    }
+
+    function centerOnRoot() {
+      const ct = document.getElementById('tree-container');
+      const rootNode = document.querySelector('.tree-node'); 
+      
+      if(rootNode && ct) {
+        ct.style.transform = 'none'; 
+        void ct.offsetWidth; 
+        
+        const rect = rootNode.getBoundingClientRect();
+        const rootCenterX = rect.left + (rect.width / 2);
+        const screenCenterX = window.innerWidth / 2;
+        
+        s = 1; 
+        x = screenCenterX - rootCenterX; 
+        y = 120; 
+        apply();
+      }
+    }
+
+    function pickNewFile(id, isSpouse) {
+      if (document.body.classList.contains('view-mode')) return; 
+      activeTarget = { id, isSpouse };
+      document.getElementById('imagePicker').click();
+    }
+
+    document.getElementById('imagePicker').onchange = function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const person = familyData.find(x => x.id == activeTarget.id);
+        if(activeTarget.isSpouse) person.spousePhoto = event.target.result;
+        else person.photo = event.target.result;
+        save();
+      };
+      reader.readAsDataURL(file);
+    };
+
+    function editP(id) {
+      const p = familyData.find(x => x.id == id);
+      p.name = prompt("Name:", p.name);
+      p.dob = prompt("Year:", p.dob || "");
+      save();
+    }
+    function addC(pid) {
+      const n = prompt("Child Name:");
+      if(n) { familyData.push({id: Date.now(), name: n, gender: "male", parentId: pid, dob: ""}); save(); }
+    }
+    function addS(id) {
+      const p = familyData.find(x => x.id == id);
+      p.spouseName = prompt("Spouse Name:");
+      p.spouseDOB = prompt("Spouse Year:");
+      save();
+    }
+    function delP(id) {
+      if(confirm("Delete person and descendants?")) { familyData = familyData.filter(x => x.id != id && x.parentId != id); save(); }
+    }
+
+    let s = 1, x = 0, y = 120, startX = 0, startY = 0, isDown = false;
+    const ct = document.getElementById('tree-container');
+    const vp = document.getElementById('viewport');
+    
+    function triggerZoom(event, amt) {
+      event.preventDefault(); event.stopPropagation();
+      s *= amt; apply();
+    }
+    
+    function resetView() { centerOnRoot(); }
+    function apply() { ct.style.transform = `translate(${x}px, ${y}px) scale(${s})`; }
+
+    function isUI(e) { return e.target.closest('#top-nav') || e.target.closest('input') || e.target.closest('.btn') || e.target.closest('.node-actions') || e.target.closest('.node-avatar'); }
+
+    vp.onmousedown = e => { if(isUI(e)) return; isDown = true; startX = e.clientX - x; startY = e.clientY - y; };
+    vp.onmousemove = e => { if(!isDown) return; x = e.clientX - startX; y = e.clientY - startY; apply(); };
+    vp.ontouchstart = e => { if(isUI(e)) return; isDown = true; startX = e.touches[0].clientX - x; startY = e.touches[0].clientY - y; };
+    vp.ontouchmove = e => { if(!isDown) return; x = e.touches[0].clientX - startX; y = e.touches[0].clientY - startY; apply(); };
+    window.onmouseup = window.ontouchend = () => isDown = false;
+
+    function importData(e) {
+      const r = new FileReader();
+      r.onload = ev => { familyData = JSON.parse(ev.target.result); isFirstLoad = true; render(); save(); };
+      r.readAsText(e.target.files[0]);
+    }
+  </script>
+</body>
+</html>
